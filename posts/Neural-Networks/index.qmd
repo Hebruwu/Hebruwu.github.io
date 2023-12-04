@@ -2,7 +2,7 @@
 title: "Neural Networks and Images"
 author: "Daniel Sabanov"
 date: "2023-12-03"
-categories: [KNN, NLP, Outlier Prediction]
+categories: [Neural Networks, Image Classification]
 ---
 
 ![Gradient-Based Learning Applied to Document Recognition by LeCun et al.](image.png)
@@ -428,4 +428,4 @@ print(f"The accuracy was {acc} and the f1 score was {f1}")
 
 ## Afterward
 
-Neural Networks are a very complex subject and this blog post has been but a tiny glimpse into the world of neural networks. To learn more about neural networks, I encourage the reader to look deeper into the [PyTorch documentation](https://pytorch.org/docs/stable/index.html), or [TensorFlow documentation](https://www.tensorflow.org/api_docs). Additionally, I reccomend looking at [Neural Networks from Scratch in Python](https://nnfs.io/). If you would like to learn more about the background for the architecture used, I would recomend reading [Gradient Based Learning Applied to Document Recognition](http://vision.stanford.edu/cs598_spring07/papers/Lecun98.pdf)
+Neural Networks are a very complex subject and this blog post has been but a tiny glimpse into the world of neural networks. To learn more about neural networks, I encourage the reader to look deeper into the [PyTorch documentation](https://pytorch.org/docs/stable/index.html), or [TensorFlow documentation](https://www.tensorflow.org/api_docs). Additionally, I reccomend looking at [Neural Networks from Scratch in Python](https://nnfs.io/). If you would like to learn more about the background for the architecture used, I would recomend reading [Gradient Based Learning Applied to Document Recognition](http://vision.stanford.edu/cs598_spring07/papers/Lecun98.pdf).

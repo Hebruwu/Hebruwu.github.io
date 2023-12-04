@@ -2,7 +2,7 @@
 title: "KNN for Text Classification"
 author: "Daniel Sabanov"
 date: "2023-12-03"
-categories: [KNN, NLP, Outlier Prediction]
+categories: [KNN, NLP, Outlier Detection]
 ---
 # Compression Is All You Need
 

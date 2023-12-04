@@ -141,9 +141,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div class="quarto-title column-body">
       <h1 class="title">Neural Networks and Images</h1>
                                 <div class="quarto-categories">
-                <div class="quarto-category">KNN</div>
-                <div class="quarto-category">NLP</div>
-                <div class="quarto-category">Outlier Prediction</div>
+                <div class="quarto-category">Neural Networks</div>
+                <div class="quarto-category">Image Classification</div>
               </div>
                   </div>
   </div>
@@ -353,7 +352,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>train_loader <span class="op">=</span> torch.utils.data.DataLoader(train_data, batch_size<span class="op">=</span>BATCH_SIZE)</span>
 <span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>test_loader <span class="op">=</span> torch.utils.data.DataLoader(test_data, batch_size<span class="op">=</span>BATCH_SIZE)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
-<pre><code>/var/folders/1n/_w4rlkb92pq1mwmj66_byr080000gn/T/ipykernel_17628/2513850566.py:6: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at /Users/runner/work/pytorch/pytorch/pytorch/torch/csrc/utils/tensor_new.cpp:264.)
+<pre><code>/var/folders/1n/_w4rlkb92pq1mwmj66_byr080000gn/T/ipykernel_18742/2513850566.py:6: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at /Users/runner/work/pytorch/pytorch/pytorch/torch/csrc/utils/tensor_new.cpp:264.)
   self.x_tensor = torch.tensor(x, dtype=torch.float32)</code></pre>
 </div>
 </div>
@@ -557,36 +556,36 @@ D_{out} = D_{in} - (kernel\_dim - 1)
 <span id="cb14-42"><a href="#cb14-42" aria-hidden="true" tabindex="-1"></a>            accuracies.append(acc)</span>
 <span id="cb14-43"><a href="#cb14-43" aria-hidden="true" tabindex="-1"></a>            f1_scores.append(f1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>The current step is 0 in the 0 epoch. The loss for the last batch was 2.5118818283081055. The total loss is 2.5118818283081055
-The current step is 1000 in the 0 epoch. The loss for the last batch was 0.00019064077059738338. The total loss is 402.3790826080949
-The current step is 2000 in the 0 epoch. The loss for the last batch was 0.007784834131598473. The total loss is 630.2171822011369
-The current step is 3000 in the 0 epoch. The loss for the last batch was 0.31402093172073364. The total loss is 828.325722384674
-The current step is 4000 in the 0 epoch. The loss for the last batch was 0.05727211758494377. The total loss is 992.3858734842652
-The current step is 5000 in the 0 epoch. The loss for the last batch was 1.038927435874939. The total loss is 1139.6768631321047
-The current step is 6000 in the 0 epoch. The loss for the last batch was 0.0009276647469960153. The total loss is 1291.0527541751126
-The current step is 7000 in the 0 epoch. The loss for the last batch was 5.411823440226726e-05. The total loss is 1433.9318784731072
-The current step is 8000 in the 0 epoch. The loss for the last batch was 0.02909553423523903. The total loss is 1569.0353211201611
-The current step is 9000 in the 0 epoch. The loss for the last batch was 0.0016324251191690564. The total loss is 1692.7488625424417
-The current step is 10000 in the 0 epoch. The loss for the last batch was 0.0007266034372150898. The total loss is 1825.799671471806
-The current step is 11000 in the 0 epoch. The loss for the last batch was 0.15393595397472382. The total loss is 1948.5074339373969
-The current step is 12000 in the 0 epoch. The loss for the last batch was 0.03495137393474579. The total loss is 2081.7106505188053
-The current step is 13000 in the 0 epoch. The loss for the last batch was 1.8179383687311201e-06. The total loss is 2201.126154773506
-The current step is 14000 in the 0 epoch. The loss for the last batch was 0.001376169384457171. The total loss is 2303.097301723252
-The current step is 0 in the 1 epoch. The loss for the last batch was 0.009656275622546673. The total loss is 2386.507972811058
-The current step is 1000 in the 1 epoch. The loss for the last batch was 2.2351696316036396e-06. The total loss is 2502.6704517734515
-The current step is 2000 in the 1 epoch. The loss for the last batch was 0.00018026494944933802. The total loss is 2619.466249132029
-The current step is 3000 in the 1 epoch. The loss for the last batch was 0.2690008580684662. The total loss is 2722.321820364261
-The current step is 4000 in the 1 epoch. The loss for the last batch was 0.0035512440372258425. The total loss is 2829.6995345894484
-The current step is 5000 in the 1 epoch. The loss for the last batch was 1.3796626329421997. The total loss is 2939.1334310225466
-The current step is 6000 in the 1 epoch. The loss for the last batch was 0.0006543516064994037. The total loss is 3020.2271241231297
-The current step is 7000 in the 1 epoch. The loss for the last batch was 4.380762038636021e-05. The total loss is 3121.3465826178667
-The current step is 8000 in the 1 epoch. The loss for the last batch was 0.0034886589273810387. The total loss is 3218.0650048560483
-The current step is 9000 in the 1 epoch. The loss for the last batch was 0.0013425680808722973. The total loss is 3303.079055246866
-The current step is 10000 in the 1 epoch. The loss for the last batch was 0.0009152928832918406. The total loss is 3408.8077732116717
-The current step is 11000 in the 1 epoch. The loss for the last batch was 0.006524167954921722. The total loss is 3503.906166425218
-The current step is 12000 in the 1 epoch. The loss for the last batch was 0.0023341537453234196. The total loss is 3590.7320133735475
-The current step is 13000 in the 1 epoch. The loss for the last batch was 5.9902122302446514e-06. The total loss is 3683.8352903491464
-The current step is 14000 in the 1 epoch. The loss for the last batch was 0.0006539506139233708. The total loss is 3762.844680770593</code></pre>
+<pre><code>The current step is 0 in the 0 epoch. The loss for the last batch was 5.68056583404541. The total loss is 5.68056583404541
+The current step is 1000 in the 0 epoch. The loss for the last batch was 0.0033018924295902252. The total loss is 552.0863177699503
+The current step is 2000 in the 0 epoch. The loss for the last batch was 0.0059255617670714855. The total loss is 814.0782704689045
+The current step is 3000 in the 0 epoch. The loss for the last batch was 0.06884118169546127. The total loss is 1044.9189079682546
+The current step is 4000 in the 0 epoch. The loss for the last batch was 0.0769830048084259. The total loss is 1257.0625633281788
+The current step is 5000 in the 0 epoch. The loss for the last batch was 0.1409284770488739. The total loss is 1413.7068831235347
+The current step is 6000 in the 0 epoch. The loss for the last batch was 0.021139046177268028. The total loss is 1559.5092783509208
+The current step is 7000 in the 0 epoch. The loss for the last batch was 0.000831345038022846. The total loss is 1715.2658046736137
+The current step is 8000 in the 0 epoch. The loss for the last batch was 0.004426009953022003. The total loss is 1864.890646117095
+The current step is 9000 in the 0 epoch. The loss for the last batch was 0.007887255400419235. The total loss is 2001.0973939303726
+The current step is 10000 in the 0 epoch. The loss for the last batch was 0.0310039184987545. The total loss is 2142.1981314078153
+The current step is 11000 in the 0 epoch. The loss for the last batch was 0.004002015106379986. The total loss is 2276.7468204431366
+The current step is 12000 in the 0 epoch. The loss for the last batch was 0.004485937301069498. The total loss is 2409.59029880478
+The current step is 13000 in the 0 epoch. The loss for the last batch was 0.0007990289013832808. The total loss is 2538.933369719378
+The current step is 14000 in the 0 epoch. The loss for the last batch was 0.007755488622933626. The total loss is 2654.6810632726256
+The current step is 0 in the 1 epoch. The loss for the last batch was 0.0021050558425486088. The total loss is 2757.288812872535
+The current step is 1000 in the 1 epoch. The loss for the last batch was 0.0006367879104800522. The total loss is 2869.6518699631747
+The current step is 2000 in the 1 epoch. The loss for the last batch was 0.005833970382809639. The total loss is 2991.5952052153184
+The current step is 3000 in the 1 epoch. The loss for the last batch was 0.12352235615253448. The total loss is 3102.5677232857415
+The current step is 4000 in the 1 epoch. The loss for the last batch was 0.00011294198338873684. The total loss is 3202.5640222237203
+The current step is 5000 in the 1 epoch. The loss for the last batch was 0.005728553980588913. The total loss is 3303.068875451456
+The current step is 6000 in the 1 epoch. The loss for the last batch was 0.00019064114894717932. The total loss is 3406.229488440803
+The current step is 7000 in the 1 epoch. The loss for the last batch was 0.00022386967611964792. The total loss is 3511.2122435310966
+The current step is 8000 in the 1 epoch. The loss for the last batch was 0.00018528304644860327. The total loss is 3615.7973996183114
+The current step is 9000 in the 1 epoch. The loss for the last batch was 0.0028845490887761116. The total loss is 3711.1961789740894
+The current step is 10000 in the 1 epoch. The loss for the last batch was 0.0010837310692295432. The total loss is 3808.655136974545
+The current step is 11000 in the 1 epoch. The loss for the last batch was 0.00020842113008257002. The total loss is 3909.6032301442674
+The current step is 12000 in the 1 epoch. The loss for the last batch was 0.003431916469708085. The total loss is 4012.272500330948
+The current step is 13000 in the 1 epoch. The loss for the last batch was 0.0013995182234793901. The total loss is 4107.566439142381
+The current step is 14000 in the 1 epoch. The loss for the last batch was 0.031621456146240234. The total loss is 4195.64182331661</code></pre>
 </div>
 </div>
 <p>Let’s graph the performance of the model as it was training.</p>
@@ -612,7 +611,7 @@ The current step is 14000 in the 1 epoch. The loss for the last batch was 0.0006
 <p><img src="index_files/figure-html/cell-13-output-1.png" width="603" height="449"></p>
 </div>
 <div class="cell-output cell-output-display">
-<p><img src="index_files/figure-html/cell-13-output-2.png" width="589" height="449"></p>
+<p><img src="index_files/figure-html/cell-13-output-2.png" width="576" height="449"></p>
 </div>
 </div>
 <p>We can see that our model trains very quickly. As a matter of fact, we did not even need the two epochs of training as both accuracy and F1-score reach a high value after less than 5000 steps.</p>
@@ -621,13 +620,13 @@ The current step is 14000 in the 1 epoch. The loss for the last batch was 0.0006
 <div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>f1, acc <span class="op">=</span> evaluate_performance(test_loader)</span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"The accuracy was </span><span class="sc">{</span>acc<span class="sc">}</span><span class="ss"> and the f1 score was </span><span class="sc">{</span>f1<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>The accuracy was 0.9612 and the f1 score was 0.9612</code></pre>
+<pre><code>The accuracy was 0.956 and the f1 score was 0.956</code></pre>
 </div>
 </div>
 </section>
 <section id="afterward" class="level2">
 <h2 class="anchored" data-anchor-id="afterward">Afterward</h2>
-<p>Neural Networks are a very complex subject and this blog post has been but a tiny glimpse into the world of neural networks. To learn more about neural networks, I encourage the reader to look deeper into the <a href="https://pytorch.org/docs/stable/index.html">PyTorch documentation</a>, or <a href="https://www.tensorflow.org/api_docs">TensorFlow documentation</a>. Additionally, I reccomend looking at <a href="https://nnfs.io/">Neural Networks from Scratch in Python</a>. If you would like to learn more about the background for the architecture used, I would recomend reading <a href="http://vision.stanford.edu/cs598_spring07/papers/Lecun98.pdf">Gradient Based Learning Applied to Document Recognition</a></p>
+<p>Neural Networks are a very complex subject and this blog post has been but a tiny glimpse into the world of neural networks. To learn more about neural networks, I encourage the reader to look deeper into the <a href="https://pytorch.org/docs/stable/index.html">PyTorch documentation</a>, or <a href="https://www.tensorflow.org/api_docs">TensorFlow documentation</a>. Additionally, I reccomend looking at <a href="https://nnfs.io/">Neural Networks from Scratch in Python</a>. If you would like to learn more about the background for the architecture used, I would recomend reading <a href="http://vision.stanford.edu/cs598_spring07/papers/Lecun98.pdf">Gradient Based Learning Applied to Document Recognition</a>.</p>
 
 
 </section>
