@@ -179,7 +179,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 
-<p><img src="img.jpg" class="img-fluid" alt="Alex Tihonovs / EyeEm//Getty Images"> # Computer as a Sommelier Wine occupies an exceptional place in the fabric of human culture, serving as an enduring symbol of tradition, refinement, and celebration spanning countless millennia. Its rich history spans across continents and epochs, with deep-seated connections in both the Old World and the New. Wine’s production and consumption have long been integral to diverse societies, providing a window into the evolution of craftsmanship, agricultural practices, and culinary artistry. In its intricate spectrum of flavors and aromas, wine encapsulates the harmonious fusion of nature, culture, and human innovation, standing as a cherished and enduring emblem of our shared heritage. The cultural significance of wine has even given rise to a specific class of experts known as sommeliers, responsible for curating wine lists at restaurants and evaluating the quality of wine produced by vineyards.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="img.jpg" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">Alex Tihonovs / EyeEm//Getty Images</figcaption>
+</figure>
+</div>
+<section id="computer-as-a-sommelier" class="level1">
+<h1>Computer as a Sommelier</h1>
+<p>Wine occupies an exceptional place in the fabric of human culture, serving as an enduring symbol of tradition, refinement, and celebration spanning countless millennia. Its rich history spans across continents and epochs, with deep-seated connections in both the Old World and the New. Wine’s production and consumption have long been integral to diverse societies, providing a window into the evolution of craftsmanship, agricultural practices, and culinary artistry. In its intricate spectrum of flavors and aromas, wine encapsulates the harmonious fusion of nature, culture, and human innovation, standing as a cherished and enduring emblem of our shared heritage. The cultural significance of wine has even given rise to a specific class of experts known as sommeliers, responsible for curating wine lists at restaurants and evaluating the quality of wine produced by vineyards.</p>
 <p>A sommelier, often regarded as a professional wine connoisseur, plays a pivotal role in selecting and presenting wines in restaurant settings, as well as assessing the quality of wines produced by various wineries. The quality of wine is dependent on measurable attributes, and if these qualities can be quantified, it stands to reason that we can develop models capable of predicting wine quality, thus making the task of currating wine somewhat simpler. However, the first step on this journey is acquiring the necessary data.</p>
 <section id="data" class="level2">
 <h2 class="anchored" data-anchor-id="data">Data</h2>
@@ -611,8 +619,8 @@ The MSE for red wine is 0.41775613260831734 and RMSE of 0.646340570139549</code>
 <span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"The MSE for white wine is </span><span class="sc">{</span>white_error<span class="sc">}</span><span class="ss"> and RMSE of </span><span class="sc">{</span>white_error <span class="op">**</span> <span class="fl">0.5</span><span class="sc">}</span><span class="ss">"</span>)</span>
 <span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"The MSE for red wine is </span><span class="sc">{</span>red_error<span class="sc">}</span><span class="ss"> and RMSE of </span><span class="sc">{</span>red_error <span class="op">**</span> <span class="fl">0.5</span><span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>The MSE for white wine is 0.3725697379543533 and RMSE of 0.610384909671228
-The MSE for red wine is 0.31858549155336 and RMSE of 0.5644337795998393</code></pre>
+<pre><code>The MSE for white wine is 0.3733305156382079 and RMSE of 0.611007786888357
+The MSE for red wine is 0.33291420118343196 and RMSE of 0.5769871759263215</code></pre>
 </div>
 </div>
 <p>At the cost of higher training time, the model we’ve developed is substantially more accurate than the linear regression model. To the extent that I’m quite confident we could produce a robust model without separating the white and red wine datasets.</p>
@@ -635,7 +643,7 @@ The MSE for red wine is 0.31858549155336 and RMSE of 0.5644337795998393</code></
 <span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>combined_error <span class="op">=</span> mean_squared_error(y_test_combined, combined_prediction)</span>
 <span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"The MSE for white wine is </span><span class="sc">{</span>combined_error<span class="sc">}</span><span class="ss"> and RMSE of </span><span class="sc">{</span>combined_error <span class="op">**</span> <span class="fl">0.5</span><span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>The MSE for white wine is 0.3524850101553075 and RMSE of 0.5937044804911846</code></pre>
+<pre><code>The MSE for white wine is 0.35226136041273964 and RMSE of 0.5935160995396331</code></pre>
 </div>
 </div>
 <p>Even with the combined dataset, it’s apparent that our model can effectively distinguish between white and red wine, assigning a quality score that outperforms the simple linear regression model.</p>
@@ -646,6 +654,7 @@ The MSE for red wine is 0.31858549155336 and RMSE of 0.5644337795998393</code></
 <p>[1] P. Cortez, et al.&nbsp;“Modeling wine preferences by data mining from physicochemical properties,” in Decis. Support Syst., vol.&nbsp;47, pp.&nbsp;547-553, 2009.</p>
 
 
+</section>
 </section>
 
 </main> <!-- /main -->
