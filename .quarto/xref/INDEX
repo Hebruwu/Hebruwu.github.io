@@ -1,0 +1,26 @@
+{
+  "index.qmd": {
+    "index.html": "9878c303"
+  },
+  "posts/post-with-code/index.qmd": {
+    "index.html": "231c71c0"
+  },
+  "posts/welcome/index.qmd": {
+    "index.html": "3485a3de"
+  },
+  "about.qmd": {
+    "about.html": "d17df5e5"
+  },
+  "posts/KNN-text-classification/index.qmd": {
+    "index.html": "01556892"
+  },
+  "posts/KNN-text-classification/post1.ipynb": {
+    "post1.html": "2fa15736"
+  },
+  "posts/KNN-text-classification/index 2.ipynb": {
+    "index 2.html": "a50f26e6"
+  },
+  "posts/Regression-wine/index.qmd": {
+    "index.html": "9cfb6f7a"
+  }
+}
