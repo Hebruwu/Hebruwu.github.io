@@ -139,7 +139,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body">
-      <h1 class="title">KNN for Text Classification</h1>
+      <h1 class="title">Neural Networks and Images</h1>
                                 <div class="quarto-categories">
                 <div class="quarto-category">KNN</div>
                 <div class="quarto-category">NLP</div>
@@ -179,6 +179,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="image.png" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">Gradient-Based Learning Applied to Document Recognition by LeCun et al.</figcaption>
+</figure>
+</div>
 <section id="image-classification-using-a-neural-network" class="level1">
 <h1>Image Classification Using a Neural Network</h1>
 <p>Bio-mimicry serves as a design approach, guiding engineers and scientists to solve problems by drawing inspiration from nature. Neural networks stand among the various manifestations of this concept. They employ mathematical functions to emulate the behavior of brain neurons, adjusting connections based on their performance—a process reminiscent of the strengthening of brain synapses in response to stimuli.</p>
@@ -347,7 +353,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>train_loader <span class="op">=</span> torch.utils.data.DataLoader(train_data, batch_size<span class="op">=</span>BATCH_SIZE)</span>
 <span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>test_loader <span class="op">=</span> torch.utils.data.DataLoader(test_data, batch_size<span class="op">=</span>BATCH_SIZE)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
-<pre><code>/var/folders/1n/_w4rlkb92pq1mwmj66_byr080000gn/T/ipykernel_16914/2513850566.py:6: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at /Users/runner/work/pytorch/pytorch/pytorch/torch/csrc/utils/tensor_new.cpp:264.)
+<pre><code>/var/folders/1n/_w4rlkb92pq1mwmj66_byr080000gn/T/ipykernel_17628/2513850566.py:6: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at /Users/runner/work/pytorch/pytorch/pytorch/torch/csrc/utils/tensor_new.cpp:264.)
   self.x_tensor = torch.tensor(x, dtype=torch.float32)</code></pre>
 </div>
 </div>
@@ -551,36 +557,36 @@ D_{out} = D_{in} - (kernel\_dim - 1)
 <span id="cb14-42"><a href="#cb14-42" aria-hidden="true" tabindex="-1"></a>            accuracies.append(acc)</span>
 <span id="cb14-43"><a href="#cb14-43" aria-hidden="true" tabindex="-1"></a>            f1_scores.append(f1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>The current step is 0 in the 0 epoch. The loss for the last batch was 3.4549365043640137. The total loss is 3.4549365043640137
-The current step is 1000 in the 0 epoch. The loss for the last batch was 0.0003376132226549089. The total loss is 488.2238568767789
-The current step is 2000 in the 0 epoch. The loss for the last batch was 0.0006364104337990284. The total loss is 716.34141680014
-The current step is 3000 in the 0 epoch. The loss for the last batch was 0.4449322819709778. The total loss is 917.8438064835191
-The current step is 4000 in the 0 epoch. The loss for the last batch was 0.027418509125709534. The total loss is 1096.5690785123625
-The current step is 5000 in the 0 epoch. The loss for the last batch was 0.6819823384284973. The total loss is 1228.6315221170535
-The current step is 6000 in the 0 epoch. The loss for the last batch was 0.00718369334936142. The total loss is 1357.326763295147
-The current step is 7000 in the 0 epoch. The loss for the last batch was 2.5569874196662568e-05. The total loss is 1508.4818455485984
-The current step is 8000 in the 0 epoch. The loss for the last batch was 0.04664741829037666. The total loss is 1649.917290136606
-The current step is 9000 in the 0 epoch. The loss for the last batch was 0.010943003930151463. The total loss is 1767.3314857355763
-The current step is 10000 in the 0 epoch. The loss for the last batch was 0.07625303417444229. The total loss is 1902.3372438394913
-The current step is 11000 in the 0 epoch. The loss for the last batch was 0.01113509014248848. The total loss is 2028.945586610349
-The current step is 12000 in the 0 epoch. The loss for the last batch was 0.00565516809001565. The total loss is 2150.9045927639354
-The current step is 13000 in the 0 epoch. The loss for the last batch was 8.048972085816786e-05. The total loss is 2271.371795618788
-The current step is 14000 in the 0 epoch. The loss for the last batch was 0.000710233929567039. The total loss is 2371.550160141267
-The current step is 0 in the 1 epoch. The loss for the last batch was 0.006248997524380684. The total loss is 2468.3533133020796
-The current step is 1000 in the 1 epoch. The loss for the last batch was 2.7029969714931212e-05. The total loss is 2584.376191064959
-The current step is 2000 in the 1 epoch. The loss for the last batch was 0.0031830326188355684. The total loss is 2686.1134369821834
-The current step is 3000 in the 1 epoch. The loss for the last batch was 0.00045319690252654254. The total loss is 2792.8992587544394
-The current step is 4000 in the 1 epoch. The loss for the last batch was 0.004338365513831377. The total loss is 2896.4378015009765
-The current step is 5000 in the 1 epoch. The loss for the last batch was 0.07258158922195435. The total loss is 2983.7063470749267
-The current step is 6000 in the 1 epoch. The loss for the last batch was 0.0007679103873670101. The total loss is 3067.6417703942675
-The current step is 7000 in the 1 epoch. The loss for the last batch was 0.0007987686549313366. The total loss is 3159.112466964046
-The current step is 8000 in the 1 epoch. The loss for the last batch was 1.2035833597183228. The total loss is 3269.1095810081238
-The current step is 9000 in the 1 epoch. The loss for the last batch was 0.008648743852972984. The total loss is 3364.1403262537488
-The current step is 10000 in the 1 epoch. The loss for the last batch was 0.008056752383708954. The total loss is 3471.2567522901927
-The current step is 11000 in the 1 epoch. The loss for the last batch was 0.0017160882707685232. The total loss is 3563.579129313987
-The current step is 12000 in the 1 epoch. The loss for the last batch was 5.554722520173527e-05. The total loss is 3650.4244513299213
-The current step is 13000 in the 1 epoch. The loss for the last batch was 0.00046719619422219694. The total loss is 3752.8129204722018
-The current step is 14000 in the 1 epoch. The loss for the last batch was 0.03299509361386299. The total loss is 3829.095918618343</code></pre>
+<pre><code>The current step is 0 in the 0 epoch. The loss for the last batch was 2.5118818283081055. The total loss is 2.5118818283081055
+The current step is 1000 in the 0 epoch. The loss for the last batch was 0.00019064077059738338. The total loss is 402.3790826080949
+The current step is 2000 in the 0 epoch. The loss for the last batch was 0.007784834131598473. The total loss is 630.2171822011369
+The current step is 3000 in the 0 epoch. The loss for the last batch was 0.31402093172073364. The total loss is 828.325722384674
+The current step is 4000 in the 0 epoch. The loss for the last batch was 0.05727211758494377. The total loss is 992.3858734842652
+The current step is 5000 in the 0 epoch. The loss for the last batch was 1.038927435874939. The total loss is 1139.6768631321047
+The current step is 6000 in the 0 epoch. The loss for the last batch was 0.0009276647469960153. The total loss is 1291.0527541751126
+The current step is 7000 in the 0 epoch. The loss for the last batch was 5.411823440226726e-05. The total loss is 1433.9318784731072
+The current step is 8000 in the 0 epoch. The loss for the last batch was 0.02909553423523903. The total loss is 1569.0353211201611
+The current step is 9000 in the 0 epoch. The loss for the last batch was 0.0016324251191690564. The total loss is 1692.7488625424417
+The current step is 10000 in the 0 epoch. The loss for the last batch was 0.0007266034372150898. The total loss is 1825.799671471806
+The current step is 11000 in the 0 epoch. The loss for the last batch was 0.15393595397472382. The total loss is 1948.5074339373969
+The current step is 12000 in the 0 epoch. The loss for the last batch was 0.03495137393474579. The total loss is 2081.7106505188053
+The current step is 13000 in the 0 epoch. The loss for the last batch was 1.8179383687311201e-06. The total loss is 2201.126154773506
+The current step is 14000 in the 0 epoch. The loss for the last batch was 0.001376169384457171. The total loss is 2303.097301723252
+The current step is 0 in the 1 epoch. The loss for the last batch was 0.009656275622546673. The total loss is 2386.507972811058
+The current step is 1000 in the 1 epoch. The loss for the last batch was 2.2351696316036396e-06. The total loss is 2502.6704517734515
+The current step is 2000 in the 1 epoch. The loss for the last batch was 0.00018026494944933802. The total loss is 2619.466249132029
+The current step is 3000 in the 1 epoch. The loss for the last batch was 0.2690008580684662. The total loss is 2722.321820364261
+The current step is 4000 in the 1 epoch. The loss for the last batch was 0.0035512440372258425. The total loss is 2829.6995345894484
+The current step is 5000 in the 1 epoch. The loss for the last batch was 1.3796626329421997. The total loss is 2939.1334310225466
+The current step is 6000 in the 1 epoch. The loss for the last batch was 0.0006543516064994037. The total loss is 3020.2271241231297
+The current step is 7000 in the 1 epoch. The loss for the last batch was 4.380762038636021e-05. The total loss is 3121.3465826178667
+The current step is 8000 in the 1 epoch. The loss for the last batch was 0.0034886589273810387. The total loss is 3218.0650048560483
+The current step is 9000 in the 1 epoch. The loss for the last batch was 0.0013425680808722973. The total loss is 3303.079055246866
+The current step is 10000 in the 1 epoch. The loss for the last batch was 0.0009152928832918406. The total loss is 3408.8077732116717
+The current step is 11000 in the 1 epoch. The loss for the last batch was 0.006524167954921722. The total loss is 3503.906166425218
+The current step is 12000 in the 1 epoch. The loss for the last batch was 0.0023341537453234196. The total loss is 3590.7320133735475
+The current step is 13000 in the 1 epoch. The loss for the last batch was 5.9902122302446514e-06. The total loss is 3683.8352903491464
+The current step is 14000 in the 1 epoch. The loss for the last batch was 0.0006539506139233708. The total loss is 3762.844680770593</code></pre>
 </div>
 </div>
 <p>Let’s graph the performance of the model as it was training.</p>
@@ -615,7 +621,7 @@ The current step is 14000 in the 1 epoch. The loss for the last batch was 0.0329
 <div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>f1, acc <span class="op">=</span> evaluate_performance(test_loader)</span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"The accuracy was </span><span class="sc">{</span>acc<span class="sc">}</span><span class="ss"> and the f1 score was </span><span class="sc">{</span>f1<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>The accuracy was 0.9753 and the f1 score was 0.9753</code></pre>
+<pre><code>The accuracy was 0.9612 and the f1 score was 0.9612</code></pre>
 </div>
 </div>
 </section>

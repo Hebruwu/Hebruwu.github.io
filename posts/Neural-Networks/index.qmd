@@ -5,6 +5,8 @@ date: "2023-12-03"
 categories: [KNN, NLP, Outlier Prediction]
 ---
 
+![Gradient-Based Learning Applied to Document Recognition by LeCun et al.](image.png)
+
 # Image Classification Using a Neural Network
 
 Bio-mimicry serves as a design approach, guiding engineers and scientists to solve problems by drawing inspiration from nature. Neural networks stand among the various manifestations of this concept. They employ mathematical functions to emulate the behavior of brain neurons, adjusting connections based on their performance—a process reminiscent of the strengthening of brain synapses in response to stimuli.
