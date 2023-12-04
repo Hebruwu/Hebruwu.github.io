@@ -2,6 +2,7 @@
   {
     "listing": "/index.html",
     "items": [
+      "/posts/Neural-Networks/index.html",
       "/posts/KNN-text-classification/index.html",
       "/posts/Regression-wine/index.html"
     ]
