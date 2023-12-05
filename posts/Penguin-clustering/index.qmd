@@ -1,0 +1,162 @@
+# Using Clustering to Learn More About Penguins
+
+```{python}
+import matplotlib.pyplot as plt
+import pandas as pd
+
+penguins_data = pd.read_csv("penguins_size.csv")
+penguins_data.head()
+```
+
+```{python}
+penguins_data = penguins_data.dropna()
+penguins_data["species"], species_scheme = pd.factorize(penguins_data["species"])
+```
+
+```{python}
+numeric_cols = ['culmen_length_mm', 'culmen_depth_mm', 'flipper_length_mm', 'body_mass_g']
+graph = pd.plotting.scatter_matrix(penguins_data[numeric_cols], figsize=(20, 20), c=penguins_data["species"], label=species_scheme, diagonal="kde")
+```
+
+```{python}
+from sklearn.preprocessing import StandardScaler
+scaled_numeric_penguins_data = StandardScaler().fit_transform(penguins_data[numeric_cols])
+```
+
+```{python}
+from sklearn.decomposition import PCA
+pca = PCA(n_components=2)
+two_component_penguins_data = pca.fit_transform(scaled_numeric_penguins_data)
+```
+
+```{python}
+for i, target_class in enumerate(species_scheme):
+    indices = penguins_data["species"] == i
+    plt.scatter(two_component_penguins_data[indices, 0], two_component_penguins_data[indices, 1], label=target_class)
+
+plt.legend()
+```
+
+```{python}
+from sklearn.cluster import KMeans
+kmeans = KMeans(n_clusters=3)
+predictions = kmeans.fit_predict(scaled_numeric_penguins_data)
+```
+
+```{python}
+for i, target_class in enumerate(set(predictions)):
+    indices = predictions == i
+    plt.scatter(two_component_penguins_data[indices, 0], two_component_penguins_data[indices, 1], label=target_class)
+
+plt.legend()
+```
+
+```{python}
+penguins_data["predictions"] = predictions
+```
+
+```{python}
+fig1, ax1 = plt.subplots(ncols=2, figsize=(20, 10))
+fig2, ax2 = plt.subplots(ncols=2, figsize=(20, 10))
+fig3, ax3 = plt.subplots(ncols=2, figsize=(20, 10))
+fig4, ax4 = plt.subplots(ncols=2, figsize=(20, 10))
+
+penguins_data.groupby("species")["culmen_length_mm"].plot.kde(ax=ax1[0], title="Culmen Length in mm - True")
+penguins_data.groupby("species")["culmen_depth_mm"].plot.kde(ax=ax2[0], title="Culmen Depth in mm - True")
+penguins_data.groupby("species")["flipper_length_mm"].plot.kde(ax=ax3[0], title="Flipper Length in mm - True")
+penguins_data.groupby("species")["body_mass_g"].plot.kde(ax=ax4[0], title="Body Mass in g - True")
+
+penguins_data.groupby("predictions")["culmen_length_mm"].plot.kde(ax=ax1[1], title="Culmen Length in mm - Predictions")
+penguins_data.groupby("predictions")["culmen_depth_mm"].plot.kde(ax=ax2[1], title="Culmen Depth in mm - Predictions")
+penguins_data.groupby("predictions")["flipper_length_mm"].plot.kde(ax=ax3[1], title="Flipper Length in mm - Predictions")
+penguins_data.groupby("predictions")["body_mass_g"].plot.kde(ax=ax4[1], title="Body Mass in g - Predictions")
+
+
+plt.plot()
+```
+
+```{python}
+encoded = pd.get_dummies(penguins_data, columns=["island", "sex"])
+encoded.head()
+```
+
+```{python}
+encoded = encoded.drop(columns=["sex_.", "sex_MALE", "island_Torgersen", "predictions"])
+encoded.head()
+```
+
+```{python}
+scaled_penguins_data = encoded
+scaled_penguins_data[numeric_cols] = StandardScaler().fit_transform(scaled_penguins_data[numeric_cols])
+scaled_penguins_data.head()
+```
+
+```{python}
+scaled_penguins_data["island_Biscoe"] = scaled_penguins_data["island_Biscoe"].astype(int)
+scaled_penguins_data["island_Dream"] = scaled_penguins_data["island_Dream"].astype(int)
+scaled_penguins_data.head()
+```
+
+```{python}
+pca = PCA(n_components=2)
+two_component_penguins_data = pca.fit_transform(scaled_penguins_data)
+
+for i, target_class in enumerate(species_scheme):
+    indices = penguins_data["species"] == i
+    plt.scatter(two_component_penguins_data[indices, 0], two_component_penguins_data[indices, 1], label=target_class)
+
+plt.legend()
+```
+
+```{python}
+kmeans = KMeans(n_clusters=3)
+predictions = kmeans.fit_predict(scaled_penguins_data.drop(columns=["species"]))
+```
+
+```{python}
+for i, target_class in enumerate(set(predictions)):
+    indices = predictions == i
+    plt.scatter(two_component_penguins_data[indices, 0], two_component_penguins_data[indices, 1], label=target_class)
+
+plt.legend()
+```
+
+```{python}
+encoded["predictions"] = predictions
+```
+
+```{python}
+fig1, ax1 = plt.subplots(ncols=2, figsize=(20, 10))
+fig2, ax2 = plt.subplots(ncols=2, figsize=(20, 10))
+fig3, ax3 = plt.subplots(ncols=2, figsize=(20, 10))
+fig4, ax4 = plt.subplots(ncols=2, figsize=(20, 10))
+
+encoded.groupby("species")["culmen_length_mm"].plot.kde(
+    ax=ax1[0], title="Culmen Length in mm - True"
+)
+encoded.groupby("species")["culmen_depth_mm"].plot.kde(
+    ax=ax2[0], title="Culmen Depth in mm - True"
+)
+encoded.groupby("species")["flipper_length_mm"].plot.kde(
+    ax=ax3[0], title="Flipper Length in mm - True"
+)
+encoded.groupby("species")["body_mass_g"].plot.kde(
+    ax=ax4[0], title="Body Mass in g - True"
+)
+
+encoded.groupby("predictions")["culmen_length_mm"].plot.kde(
+    ax=ax1[1], title="Culmen Length in mm - Predictions"
+)
+encoded.groupby("predictions")["culmen_depth_mm"].plot.kde(
+    ax=ax2[1], title="Culmen Depth in mm - Predictions"
+)
+encoded.groupby("predictions")["flipper_length_mm"].plot.kde(
+    ax=ax3[1], title="Flipper Length in mm - Predictions"
+)
+encoded.groupby("predictions")["body_mass_g"].plot.kde(
+    ax=ax4[1], title="Body Mass in g - Predictions"
+)
+
+
+plt.plot()
+```
