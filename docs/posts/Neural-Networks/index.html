@@ -1,0 +1,873 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.3.450">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Daniel Sabanov">
+<meta name="dcterms.date" content="2023-12-03">
+
+<title>Rock with Lightning - Neural Networks and Images</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<link rel="stylesheet" href="../../styles.css">
+</head>
+
+<body class="nav-fixed fullcontent">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">Rock with Lightning</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../about.html" rel="" target="">
+ <span class="menu-text">About</span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/Hebruwu" rel="" target=""><i class="bi bi-github" role="img">
+</i> 
+ <span class="menu-text"></span></a>
+  </li>  
+</ul>
+            <div class="quarto-navbar-tools">
+</div>
+          </div> <!-- /navcollapse -->
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">Neural Networks and Images</h1>
+                                <div class="quarto-categories">
+                <div class="quarto-category">Neural Networks</div>
+                <div class="quarto-category">Image Classification</div>
+              </div>
+                  </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      <div>
+      <div class="quarto-title-meta-heading">Author</div>
+      <div class="quarto-title-meta-contents">
+               <p>Daniel Sabanov </p>
+            </div>
+    </div>
+      
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">December 3, 2023</p>
+      </div>
+    </div>
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    
+<!-- main -->
+<main class="content quarto-banner-title-block" id="quarto-document-content">
+
+
+
+
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="image.png" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">Gradient-Based Learning Applied to Document Recognition by LeCun et al.</figcaption>
+</figure>
+</div>
+<section id="image-classification-using-a-neural-network" class="level1">
+<h1>Image Classification Using a Neural Network</h1>
+<p>Bio-mimicry serves as a design approach, guiding engineers and scientists to solve problems by drawing inspiration from nature. Neural networks stand among the various manifestations of this concept. They employ mathematical functions to emulate the behavior of brain neurons, adjusting connections based on their performance—a process reminiscent of the strengthening of brain synapses in response to stimuli.</p>
+<p>Despite the recent surge in attention surrounding neural networks, their roots trace back to the mid-20th century. Early research laid the foundation, yet it was the increased computational power and the advent of the GPU that allowed artificial neural networks to become more practical. Consequently, they found applications across diverse fields, proving particularly successful in realms like image recognition and natural language processing.</p>
+<p>In this blog, we will build and train a basic neural network with the goal of teaching it to discern numbers within monochrome images. This example may seem simple and redundant as similar results can be achieved through various other techniques. However, its simplicity serves as a valuable learning experience—an introduction to the intricate workings of neural networks. As we delve into this endeavor, we aim to demystify the complexities, making the understanding of neural networks more accessible through a practical and illustrative example.</p>
+<section id="the-data" class="level2">
+<h2 class="anchored" data-anchor-id="the-data">The Data!</h2>
+<section id="summary-of-the-data" class="level3">
+<h3 class="anchored" data-anchor-id="summary-of-the-data">Summary of the Data</h3>
+<p>For training and evaluation of our neural network, we will be using the popular MNIST dataset. The MNIST dataset comprises various <span class="math inline">\(28 \times 28\)</span> images of handwritten numbers from 0 through 9 in a monochrome format with values from 0 to 255. This copy of the MNIST dataset was taken from <a href="https://www.kaggle.com/datasets/hojjatk/mnist-dataset">kaggle</a>. The data is stored in a particularly interesting format, so we will be using the provided <a href="https://www.kaggle.com/code/hojjatk/read-mnist-dataset/notebook">example</a> to unpack the dataset.</p>
+<div class="cell" data-execution_count="1">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> struct</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> array <span class="im">import</span> array</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> os.path <span class="im">import</span> join</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="co"># MNIST Data Loader Class</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> MnistDataloader(<span class="bu">object</span>):</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, training_images_filepath, training_labels_filepath,</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>                 test_images_filepath, test_labels_filepath):</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.training_images_filepath <span class="op">=</span> training_images_filepath</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.training_labels_filepath <span class="op">=</span> training_labels_filepath</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.test_images_filepath <span class="op">=</span> test_images_filepath</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.test_labels_filepath <span class="op">=</span> test_labels_filepath</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">@staticmethod</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> read_images_labels(images_filepath, labels_filepath):</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>        labels <span class="op">=</span> []</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>        <span class="cf">with</span> <span class="bu">open</span>(labels_filepath, <span class="st">'rb'</span>) <span class="im">as</span> <span class="bu">file</span>:</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>            magic, size <span class="op">=</span> struct.unpack(<span class="st">"&gt;II"</span>, <span class="bu">file</span>.read(<span class="dv">8</span>))</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> magic <span class="op">!=</span> <span class="dv">2049</span>:</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>                <span class="cf">raise</span> <span class="pp">ValueError</span>(<span class="st">'Magic number mismatch, expected 2049, got </span><span class="sc">{}</span><span class="st">'</span>.<span class="bu">format</span>(magic))</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>            labels <span class="op">=</span> array(<span class="st">"B"</span>, <span class="bu">file</span>.read())</span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>        <span class="cf">with</span> <span class="bu">open</span>(images_filepath, <span class="st">'rb'</span>) <span class="im">as</span> <span class="bu">file</span>:</span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>            magic, size, rows, cols <span class="op">=</span> struct.unpack(<span class="st">"&gt;IIII"</span>, <span class="bu">file</span>.read(<span class="dv">16</span>))</span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> magic <span class="op">!=</span> <span class="dv">2051</span>:</span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>                <span class="cf">raise</span> <span class="pp">ValueError</span>(<span class="st">'Magic number mismatch, expected 2051, got </span><span class="sc">{}</span><span class="st">'</span>.<span class="bu">format</span>(magic))</span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>            image_data <span class="op">=</span> array(<span class="st">"B"</span>, <span class="bu">file</span>.read())</span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>        images <span class="op">=</span> []</span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(size):</span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>            images.append([<span class="dv">0</span>] <span class="op">*</span> rows <span class="op">*</span> cols)</span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(size):</span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>            img <span class="op">=</span> np.array(image_data[i <span class="op">*</span> rows <span class="op">*</span> cols:(i <span class="op">+</span> <span class="dv">1</span>) <span class="op">*</span> rows <span class="op">*</span> cols])</span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a>            img <span class="op">=</span> img.reshape(<span class="dv">28</span>, <span class="dv">28</span>)</span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a>            images[i][:] <span class="op">=</span> img</span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> images, labels</span>
+<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> load_data(<span class="va">self</span>):</span>
+<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a>        x_train, y_train <span class="op">=</span> <span class="va">self</span>.read_images_labels(<span class="va">self</span>.training_images_filepath, <span class="va">self</span>.training_labels_filepath)</span>
+<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a>        x_test, y_test <span class="op">=</span> <span class="va">self</span>.read_images_labels(<span class="va">self</span>.test_images_filepath, <span class="va">self</span>.test_labels_filepath)</span>
+<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> (x_train, y_train), (x_test, y_test)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-execution_count="2">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="op">%</span>matplotlib inline</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> random</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Set file paths based on added MNIST Datasets</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>input_path <span class="op">=</span> <span class="st">'/Users/danielsabanov/Documents/VT_Notes/9th_Semester/ML1Blog/Post4/MNIST'</span>  <span class="co"># YOU WILL NEED TO MODIFY THIS</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>training_images_filepath <span class="op">=</span> join(input_path, <span class="st">'train-images-idx3-ubyte/train-images-idx3-ubyte'</span>)</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>training_labels_filepath <span class="op">=</span> join(input_path, <span class="st">'train-labels-idx1-ubyte/train-labels-idx1-ubyte'</span>)</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>test_images_filepath <span class="op">=</span> join(input_path, <span class="st">'t10k-images-idx3-ubyte/t10k-images-idx3-ubyte'</span>)</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>test_labels_filepath <span class="op">=</span> join(input_path, <span class="st">'t10k-labels-idx1-ubyte/t10k-labels-idx1-ubyte'</span>)</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Helper function to show a list of images with their relating titles</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> show_images(images, title_texts):</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>    cols <span class="op">=</span> <span class="dv">5</span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>    rows <span class="op">=</span> <span class="bu">int</span>(<span class="bu">len</span>(images) <span class="op">/</span> cols) <span class="op">+</span> <span class="dv">1</span></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>    plt.figure(figsize<span class="op">=</span>(<span class="dv">30</span>, <span class="dv">20</span>))</span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>    index <span class="op">=</span> <span class="dv">1</span></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> x <span class="kw">in</span> <span class="bu">zip</span>(images, title_texts):</span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>        image <span class="op">=</span> x[<span class="dv">0</span>]</span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>        title_text <span class="op">=</span> x[<span class="dv">1</span>]</span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>        plt.subplot(rows, cols, index)</span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>        plt.imshow(image, cmap<span class="op">=</span>plt.cm.gray)</span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> (title_text <span class="op">!=</span> <span class="st">''</span>):</span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>            plt.title(title_text, fontsize<span class="op">=</span><span class="dv">15</span>)</span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>        index <span class="op">+=</span> <span class="dv">1</span></span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a><span class="co"># Load MINST dataset</span></span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a>mnist_dataloader <span class="op">=</span> MnistDataloader(training_images_filepath, training_labels_filepath, test_images_filepath,</span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a>                                   test_labels_filepath)</span>
+<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a>(x_train, y_train), (x_test, y_test) <span class="op">=</span> mnist_dataloader.load_data()</span>
+<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a><span class="co"># Show some random training and test images </span></span>
+<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a>images_2_show <span class="op">=</span> []</span>
+<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a>titles_2_show <span class="op">=</span> []</span>
+<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">0</span>, <span class="dv">10</span>):</span>
+<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a>    r <span class="op">=</span> random.randint(<span class="dv">1</span>, <span class="dv">60000</span>)</span>
+<span id="cb2-39"><a href="#cb2-39" aria-hidden="true" tabindex="-1"></a>    images_2_show.append(x_train[r])</span>
+<span id="cb2-40"><a href="#cb2-40" aria-hidden="true" tabindex="-1"></a>    titles_2_show.append(<span class="st">'training image ['</span> <span class="op">+</span> <span class="bu">str</span>(r) <span class="op">+</span> <span class="st">'] = '</span> <span class="op">+</span> <span class="bu">str</span>(y_train[r]))</span>
+<span id="cb2-41"><a href="#cb2-41" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-42"><a href="#cb2-42" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">0</span>, <span class="dv">5</span>):</span>
+<span id="cb2-43"><a href="#cb2-43" aria-hidden="true" tabindex="-1"></a>    r <span class="op">=</span> random.randint(<span class="dv">1</span>, <span class="dv">10000</span>)</span>
+<span id="cb2-44"><a href="#cb2-44" aria-hidden="true" tabindex="-1"></a>    images_2_show.append(x_test[r])</span>
+<span id="cb2-45"><a href="#cb2-45" aria-hidden="true" tabindex="-1"></a>    titles_2_show.append(<span class="st">'test image ['</span> <span class="op">+</span> <span class="bu">str</span>(r) <span class="op">+</span> <span class="st">'] = '</span> <span class="op">+</span> <span class="bu">str</span>(y_test[r]))</span>
+<span id="cb2-46"><a href="#cb2-46" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-47"><a href="#cb2-47" aria-hidden="true" tabindex="-1"></a>show_images(images_2_show, titles_2_show)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="index_files/figure-html/cell-3-output-1.png" width="2214" height="1158"></p>
+</div>
+</div>
+<p>If you want to work with the provided dataset, you will need to modify the input path to the location where you store your data. Alternatively, various libraries, such as Scikit-Learn and PyTorch provide their own versions of the data. In my case I am using the version from Kaggle because it will also provide practice in converting the dataset to a format that works with PyTorch. Now lets examine the distribution of the digits within both the training and testing sets.</p>
+<div class="cell" data-execution_count="3">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>digit_counts_train <span class="op">=</span> {digit: y_train.count(digit) <span class="cf">for</span> digit <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">10</span>)}</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>digit_counts_test <span class="op">=</span> {digit: y_test.count(digit) <span class="cf">for</span> digit <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">10</span>)}</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>fig_train, ax_train <span class="op">=</span> plt.subplots()</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>ax_train.bar(digit_counts_train.keys(), digit_counts_train.values(), color<span class="op">=</span><span class="st">'skyblue'</span>)</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>ax_train.set_xlabel(<span class="st">'Digit'</span>)</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>ax_train.set_ylabel(<span class="st">'Number of Data Points'</span>)</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>ax_train.set_title(<span class="st">'Number of Data Points for Each Digit in MNIST training partition'</span>)</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>plt.show()</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>fig_test, ax_test <span class="op">=</span> plt.subplots()</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>ax_test.bar(digit_counts_test.keys(), digit_counts_test.values(), color<span class="op">=</span><span class="st">'skyblue'</span>)</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>ax_test.set_xlabel(<span class="st">'Digit'</span>)</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>ax_test.set_ylabel(<span class="st">'Number of Data Points'</span>)</span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>ax_test.set_title(<span class="st">'Number of Data Points for Each Digit in MNIST training partition'</span>)</span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="index_files/figure-html/cell-4-output-1.png" width="601" height="449"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="index_files/figure-html/cell-4-output-2.png" width="601" height="449"></p>
+</div>
+</div>
+<p>We can see that the digit labels in both the training and testing partitions are roughly evenly distributed. This means that there should be minimal bias in the results, and there is no need to try to balance the data. Now, let’s convert the data to a format PyTorch is able to work with.</p>
+</section>
+<section id="converting-the-data" class="level3">
+<h3 class="anchored" data-anchor-id="converting-the-data">Converting the Data</h3>
+<p>PyTorch has a very nice API for working with datasets. It requires the user to define a subclass of <code>torch.utils.data.Dataset</code>, this subclass must contain implementations for the following functions: <code>__init__</code>, <code>__len__</code>, and <code>__getitem__</code>. Let us build one such dataset class.</p>
+<div class="cell" data-execution_count="4">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> MNISTDataset(torch.utils.data.Dataset):</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, x, y):</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.x_tensor <span class="op">=</span> torch.tensor(x, dtype<span class="op">=</span>torch.float32)</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.y_tensor <span class="op">=</span> torch.tensor(y, dtype<span class="op">=</span>torch.<span class="bu">long</span>)</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__len__</span>(<span class="va">self</span>):</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>        <span class="cf">assert</span> <span class="bu">len</span>(<span class="va">self</span>.x_tensor) <span class="op">==</span> <span class="bu">len</span>(<span class="va">self</span>.y_tensor)</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="bu">len</span>(<span class="va">self</span>.y_tensor)</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__getitem__</span>(<span class="va">self</span>, item):</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>        image <span class="op">=</span> torch.unsqueeze(<span class="va">self</span>.x_tensor[item, :, :], <span class="dv">0</span>)</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>        label <span class="op">=</span> <span class="va">self</span>.y_tensor[item]</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> image, label</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Let’s address a few nuances in our dataset definition. First of all, observe that we are creating two types of <a href="https://pytorch.org/docs/stable/tensors.html">tensors</a>. The first, called <code>x_tensor</code> contains a tensor that stores number images in the <code>float32</code> format. This is because, as you will see, the first layer of our neural network is a 2-dimensional convolution layer. According to PyTorch documentation, it expects the inputs to be in <code>float32</code> format. The second tensor, called <code>y_tensor</code>that stores the labels uses <code>torch.long</code> format. This is done for ease of interaction with our loss function. I will be explaining more about it once we reach it.</p>
+<p>Now, I want you to observe that we are unsqueezing the image when we return it from <code>__getitem__</code>. This is done also due to the restrictions posed by the convolution layer. According to its documentation, the dimensions of the input must be shaped as <code>(batch size, number of channels, height, width)</code>. The batch size will be handled by our data loader, which we will shortly implement. However, the number of channels is for us to handle. The number of channels represents the number of values that are used to define the color of a single pixel. For example, an image in RGB format would have three channels. Since MNIST is monochrome, we need the number of channels to be 1. We can do so using the <a href="https://pytorch.org/docs/stable/generated/torch.unsqueeze.html">unsqueeze</a> function. Now let’s handle batching…</p>
+<div class="cell" data-execution_count="5">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>train_data <span class="op">=</span> MNISTDataset(x_train, y_train)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>test_data <span class="op">=</span> MNISTDataset(x_test, y_test)</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>BATCH_SIZE <span class="op">=</span> <span class="dv">4</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>train_loader <span class="op">=</span> torch.utils.data.DataLoader(train_data, batch_size<span class="op">=</span>BATCH_SIZE)</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>test_loader <span class="op">=</span> torch.utils.data.DataLoader(test_data, batch_size<span class="op">=</span>BATCH_SIZE)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>/var/folders/1n/_w4rlkb92pq1mwmj66_byr080000gn/T/ipykernel_18742/2513850566.py:6: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at /Users/runner/work/pytorch/pytorch/pytorch/torch/csrc/utils/tensor_new.cpp:264.)
+  self.x_tensor = torch.tensor(x, dtype=torch.float32)</code></pre>
+</div>
+</div>
+<p>The <code>torch.utils.data.DataLoader</code> class provides batching functionality. Batching is used to feed multiple inputs into a neural network at once. This is done because it is actually more efficient to do so. Since GPU is a parallel architecture, we gain a training speedup by feeding multiple inputs at once. Let’s verify that our input into the network is of appropriate size.</p>
+<div class="cell" data-execution_count="6">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="bu">next</span>(<span class="bu">iter</span>(train_loader))[<span class="dv">0</span>].size()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="6">
+<pre><code>torch.Size([4, 1, 28, 28])</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="neural-networks-background" class="level2">
+<h2 class="anchored" data-anchor-id="neural-networks-background">Neural Networks Background</h2>
+<p>The architecture is typically used for image recognition is a Convolutional Neural Network (CNN). They are like regular neural networks, but convoluted! More seriously, a CNN typically consists of several convolution layers (do not worry, I will explain what it is soon) followed by linear layers. A basic way to think about CNNs is as if they were a pipeline of matrix and vector operations.</p>
+<section id="the-convolution-layer" class="level3">
+<h3 class="anchored" data-anchor-id="the-convolution-layer">The Convolution Layer</h3>
+<p>A convolution operation is actually trivial in nature. It is the process of passing a larger matrix through a smaller filter matrix. Still sounds like a word salad? It is easier when one visualizes it. Say we have a matrix of size <span class="math inline">\(3 \times 3\)</span> and a filter of size <span class="math inline">\(2 \times 2\)</span>. <span class="math display">\[
+A =
+\left[ \begin{matrix}
+a_1 &amp; a_2 &amp; a_3\\
+a_4 &amp; a_5 &amp; a_6\\
+a_7 &amp; a_8 &amp; a_9\\
+\end{matrix} \right]
+\]</span> <span class="math display">\[
+filter =
+\left[ \begin{matrix}
+f_1 &amp; f_2 \\
+f_3 &amp; f_4 \\
+\end{matrix} \right]
+\]</span> Let our result be <span class="math display">\[
+R = \left[ \begin{matrix}
+r_1 &amp; r_2 \\
+r_3 &amp; r_4 \\
+\end{matrix}\right]
+\]</span></p>
+<p>Then, our <span class="math inline">\(r_1\)</span> would be the sum of the products of the numbers in the top left corner of <span class="math inline">\(A\)</span> (<span class="math inline">\(a_1\)</span>, <span class="math inline">\(a_2\)</span>, <span class="math inline">\(a_4\)</span>, <span class="math inline">\(a_5\)</span>) that can be overlapped by the filter. <span class="math display">\[
+r_1 = a_1 \times f_1 + a2 \times f_2 + a_4 \times f_3 + a_5 \times f_4
+\]</span> We will do the same for the top right corner of <span class="math inline">\(A\)</span> <span class="math display">\[
+r_2 = a_2 \times f_1 + a3 \times f_2 + a_5 \times f_3 + a_6 \times f_4
+\]</span></p>
+<p>This pattern will continue until all of <span class="math inline">\(A\)</span> passes through the filter. ### The Linear Layer The linear layer is even simpler. It is called linear because it represents a linear equation. That means that given an input <span class="math inline">\(X\)</span>, the output will be <span class="math display">\[
+\vec{f(x)} = W \vec{x} + \vec{b}
+\]</span> where <span class="math inline">\(W\)</span> represents the weights and <span class="math inline">\(b\)</span> represents bias. Both the weight and the bias will be the values that the network will be learning.</p>
+</section>
+</section>
+<section id="building-the-neural-network" class="level2">
+<h2 class="anchored" data-anchor-id="building-the-neural-network">Building the Neural Network!</h2>
+<p>Now that we have a general understanding of how CNNs function, we should try and build one. Pytorch represents models as classes containing an initialization method and a “forward” method. Initialization is pretty self-explanatory, it is the initialization function that initializes all the layers. The “forward” may sound a bit cryptic, but it is also very trivial. It is a method that describes how the data is propagated forward through the network. Finally, every Neural Network also has to have a backwards pass to adjust the weights of the model. This is done by a method automatically generated by PyTorch—the “backward” method.</p>
+<div class="cell" data-execution_count="7">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> torch.nn <span class="im">import</span> functional <span class="im">as</span> F</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> torch <span class="im">import</span> nn</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> NumberClassifier(nn.Module):</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>):</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>        <span class="bu">super</span>(NumberClassifier, <span class="va">self</span>).<span class="fu">__init__</span>()</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.conv_layer1 <span class="op">=</span> nn.Conv2d(<span class="dv">1</span>, <span class="dv">4</span>, (<span class="dv">3</span>, <span class="dv">3</span>))</span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.conv_layer2 <span class="op">=</span> nn.Conv2d(<span class="dv">4</span>, <span class="dv">8</span>, (<span class="dv">2</span>, <span class="dv">2</span>))</span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.linear_layer1 <span class="op">=</span> nn.Linear(<span class="dv">288</span>, <span class="dv">144</span>)</span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.linear_layer2 <span class="op">=</span> nn.Linear(<span class="dv">144</span>, <span class="dv">72</span>)</span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.linear_layer3 <span class="op">=</span> nn.Linear(<span class="dv">72</span>, <span class="dv">10</span>)</span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> forward(<span class="va">self</span>, x):</span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>        <span class="co"># First Layer</span></span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>        x <span class="op">=</span> <span class="va">self</span>.conv_layer1(x)</span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a>        x <span class="op">=</span> F.relu(x)</span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a>        x <span class="op">=</span> F.max_pool2d(x, (<span class="dv">2</span>, <span class="dv">2</span>))</span>
+<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Second Layer</span></span>
+<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a>        x <span class="op">=</span> <span class="va">self</span>.conv_layer2(x)</span>
+<span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a>        x <span class="op">=</span> F.relu(x)</span>
+<span id="cb9-24"><a href="#cb9-24" aria-hidden="true" tabindex="-1"></a>        x <span class="op">=</span> F.max_pool2d(x, (<span class="dv">2</span>, <span class="dv">2</span>))</span>
+<span id="cb9-25"><a href="#cb9-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-26"><a href="#cb9-26" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Third Layer</span></span>
+<span id="cb9-27"><a href="#cb9-27" aria-hidden="true" tabindex="-1"></a>        x <span class="op">=</span> x.view(<span class="op">-</span><span class="dv">1</span>, <span class="va">self</span>.num_flat_features(x))</span>
+<span id="cb9-28"><a href="#cb9-28" aria-hidden="true" tabindex="-1"></a>        x <span class="op">=</span> <span class="va">self</span>.linear_layer1(x)</span>
+<span id="cb9-29"><a href="#cb9-29" aria-hidden="true" tabindex="-1"></a>        x <span class="op">=</span> F.relu(x)</span>
+<span id="cb9-30"><a href="#cb9-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-31"><a href="#cb9-31" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Fourth Layer</span></span>
+<span id="cb9-32"><a href="#cb9-32" aria-hidden="true" tabindex="-1"></a>        x <span class="op">=</span> <span class="va">self</span>.linear_layer2(x)</span>
+<span id="cb9-33"><a href="#cb9-33" aria-hidden="true" tabindex="-1"></a>        x <span class="op">=</span> F.relu(x)</span>
+<span id="cb9-34"><a href="#cb9-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-35"><a href="#cb9-35" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Fifth Layer</span></span>
+<span id="cb9-36"><a href="#cb9-36" aria-hidden="true" tabindex="-1"></a>        x <span class="op">=</span> <span class="va">self</span>.linear_layer3(x)</span>
+<span id="cb9-37"><a href="#cb9-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-38"><a href="#cb9-38" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> x</span>
+<span id="cb9-39"><a href="#cb9-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-40"><a href="#cb9-40" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> num_flat_features(<span class="va">self</span>, x):</span>
+<span id="cb9-41"><a href="#cb9-41" aria-hidden="true" tabindex="-1"></a>        num_features <span class="op">=</span> <span class="dv">1</span></span>
+<span id="cb9-42"><a href="#cb9-42" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> s <span class="kw">in</span> x.size()[<span class="dv">1</span>:]:</span>
+<span id="cb9-43"><a href="#cb9-43" aria-hidden="true" tabindex="-1"></a>            num_features <span class="op">*=</span> s</span>
+<span id="cb9-44"><a href="#cb9-44" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> num_features</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Now that we have assembled our model, let’s take a deeper look into the components, so I could explain what are the values that are being fed into each layer.</p>
+<section id="first-layer" class="level3">
+<h3 class="anchored" data-anchor-id="first-layer">First Layer</h3>
+<p>The first convolution layer is initialized with the values 1, 4, and (3, 3). The first value, 1, represents the number of channels the number of channels that are being fed into the layer. Since our image is monochrome, we only need a single channel. The second value, 4, represents the number of output channels that we want from the layer. There is no specific reason for selecting this value other than the fact that 4 is greater than 1. It is generally considered better for convolution layers to output a larger number of channels than what they receive. (3, 3) is the size of the kernel, or what we previously referred to as a filter. One again, I picked it somewhat arbitrarily while making it square and of odd height and width to simplify the computations later on.</p>
+<p>You can see that the output of the convolution is passed into something called a ReLU. ReLU is an acronym for Rectified Linear Unit, a function defined as</p>
+<p><span class="math display">\[
+f(x) = max(0, x)
+\]</span></p>
+<p>We are using a ReLU function to introduce non-linearity to our neural network. There are many other functions that can be used instead of ReLU. However, ReLU is amongst the simplest activation functions and thus reduces the computation complexity-meaning it increases both inference and training speed. Non-linearity is important since if all the layers would be linear, the entire neural network would become a very convoluted representation of a linear function.</p>
+<p>The output of ReLU is then passed into a two-dimensional max pool function. What it does is split its input matrix into multiple <span class="math inline">\(2 \times 2\)</span> squares and select the maximum value out of each square. This allows the neural network to focus on the most prominent features in the image.</p>
+</section>
+<section id="second-layer" class="level3">
+<h3 class="anchored" data-anchor-id="second-layer">Second Layer</h3>
+<p>The second layer is very similar to the first layer. We now specify that the number of input channels is 4 since the output of the previous layer had four channels.</p>
+</section>
+<section id="third-layer" class="level3">
+<h3 class="anchored" data-anchor-id="third-layer">Third Layer</h3>
+<p>The third layer is simpler than the previous two. In this layer we accept a specific number of features, in this case 288, and pass it through our linear layer to the ReLU function. However, why do we accept 288 features specifically, and what are we doing before that? Were we not working with matrices previously? My answer to this question is-exactly! The first thing we do before we pass output from the previous layer into our linear layer is to flatten the tensors into vectors.</p>
+<p>Now let’s calculate the dimensions of the tensor that gets out of the second layer. When a matrix goes through a 2d convolution, the output will be of size</p>
+<p><span class="math display">\[
+D_{out} = D_{in} - (kernel\_dim - 1)
+\]</span></p>
+<p>Where D represents either the width or the height of the matrix (you are going to run this calculation once for each dimension). So, our new matrix is of size <span class="math inline">\(26 \times 26\)</span>.</p>
+<p>We pass our matrix through a two-dimensional max-pool of size <span class="math inline">\(2 \times 2\)</span>. This reduces the size of each dimension by half. Our matrix is now of size <span class="math inline">\(13 \times 13\)</span>.</p>
+<p>After passing through our next layer, the size becomes <span class="math inline">\(12 \times 12\)</span> and then <span class="math inline">\(6 \times 6\)</span>. So each matrix has thirty-six values. We also have eight channels. So the total number of values to come out of the second layer is 288. The exact number we are feeding into our third layer.</p>
+</section>
+<section id="fourth-layer" class="level3">
+<h3 class="anchored" data-anchor-id="fourth-layer">Fourth Layer</h3>
+<p>This layer is even simpler that the previous layer since we do not have to flatten anything, we just pass the output from one side to the other.</p>
+</section>
+<section id="fifth-layer" class="level3">
+<h3 class="anchored" data-anchor-id="fifth-layer">Fifth Layer</h3>
+<p>Since this is the final layer, there is no need for the ReLU function as there is no need to avoid linearity. Since we are trying to classify our input into 10 classes, the output from this layer should also be split into 10 values. The index of the highest value will represent the class that the network is trying to predict.</p>
+</section>
+</section>
+<section id="teaching-the-network" class="level2">
+<h2 class="anchored" data-anchor-id="teaching-the-network">Teaching the Network!</h2>
+<p>Now that we have defined our model, it is time to handle its training, as it will not be capable of classifying the digits accurately without training. First, we will create an instance of our network.</p>
+<div class="cell" data-execution_count="8">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>cnn <span class="op">=</span> NumberClassifier()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Now, I have mentioned GPUs several times in this post; how about we use one to train the network? To do so, we need a reference to our GPU, since in my case I am training the network on an M1 laptop, I will need to use the <code>MPS</code> backend. If you are training on an Nvidia GPU you will need to change the way you are getting the reference to the device. I encourage you to look through the PyTorch <a href="https://pytorch.org/docs/stable/cuda.html">CUDA documentation</a> to understand how to do that.</p>
+<p>After we have a reference to the device, we will want to send our network to the said device. Do note that from now on you will also need to send all the tensors to the device as well!</p>
+<div class="cell" data-execution_count="9">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>device <span class="op">=</span> torch.device(<span class="st">"mps"</span> <span class="cf">if</span> torch.backends.mps.is_available() <span class="cf">else</span> <span class="st">"cpu"</span>)</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>cnn.to(device)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="9">
+<pre><code>NumberClassifier(
+  (conv_layer1): Conv2d(1, 4, kernel_size=(3, 3), stride=(1, 1))
+  (conv_layer2): Conv2d(4, 8, kernel_size=(2, 2), stride=(1, 1))
+  (linear_layer1): Linear(in_features=288, out_features=144, bias=True)
+  (linear_layer2): Linear(in_features=144, out_features=72, bias=True)
+  (linear_layer3): Linear(in_features=72, out_features=10, bias=True)
+)</code></pre>
+</div>
+</div>
+<p>Next, we will define our loss metric and optimizer. The loss metric is used to help our model understand the measure by which it was wrong. Since we are using multiclass classification, we will want to use CrossEntropyLoss. Remember when we were discussing the reasoning for using <code>long</code> format for the true labels in our model and I said that it has to do with the way our loss function will work? Well, this is the explanation. Cross-entropy loss works with hot-encoded vectors, meaning our predictions vector and labels vector must be hot encoded. We could have hot encoded our labels, but that would have taken a little extra work. Luckily, PyTorch developers recognized that, so instead, <code>CrossEntropyLoss</code> is capable of hot encoding the labels by itself, as long as the labels are provided in the <code>long</code> format. This simplifies the work for us since we do not need to worry about encoding the labels anymore.</p>
+<p>We should discuss the optimizer a little. The optimizer is used to adjust the weights of the model based on the loss function. It is what performs the gradient descent in the model. PyTorch offers many different optimizers. I have chosen the AdamW optimizer since it is the optimizer I see most often used. However, it may not be the perfect optimizer for this task. I encourage the reader to experiment with their own optimizers to perhaps find one that works better.</p>
+<div class="cell" data-execution_count="10">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>loss_metric <span class="op">=</span> nn.CrossEntropyLoss()</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>optimizer <span class="op">=</span> torch.optim.AdamW(cnn.parameters())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Now that we have defined everything. It is time to train our network. To validate the performance of the model, we will be using the f1-score and accuracy metrics. We will run the model against the testing dataset in no grad mode (which means gradients will not be computed and the model will not remember the data) every 1000 steps. We will also do one validation run after the model finishes training.</p>
+<div class="cell" data-execution_count="11">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> f1_score, accuracy_score</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> evaluate_performance(loader):</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>    predictions_list <span class="op">=</span> []</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>    labels_list <span class="op">=</span> []</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> batch <span class="kw">in</span> loader:</span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>        image, label <span class="op">=</span> batch</span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>        <span class="cf">with</span> torch.no_grad():</span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>            image <span class="op">=</span> image.to(device)</span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>            outputs <span class="op">=</span> cnn(image)</span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>            predictions <span class="op">=</span> torch.argmax(outputs, dim<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>            predictions_list <span class="op">+=</span> predictions.tolist()</span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a>            labels_list <span class="op">+=</span> label.tolist()</span>
+<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a>            </span>
+<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a>    f1 <span class="op">=</span> f1_score(labels_list, predictions_list, average<span class="op">=</span><span class="st">"micro"</span>)</span>
+<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a>    acc <span class="op">=</span> accuracy_score(labels_list, predictions_list)</span>
+<span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> f1, acc</span>
+<span id="cb14-18"><a href="#cb14-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-19"><a href="#cb14-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-20"><a href="#cb14-20" aria-hidden="true" tabindex="-1"></a>NUM_EPOCHS <span class="op">=</span> <span class="dv">2</span></span>
+<span id="cb14-21"><a href="#cb14-21" aria-hidden="true" tabindex="-1"></a>losses <span class="op">=</span> []</span>
+<span id="cb14-22"><a href="#cb14-22" aria-hidden="true" tabindex="-1"></a>accuracies <span class="op">=</span> []</span>
+<span id="cb14-23"><a href="#cb14-23" aria-hidden="true" tabindex="-1"></a>f1_scores<span class="op">=</span>  []</span>
+<span id="cb14-24"><a href="#cb14-24" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> epoch <span class="kw">in</span> <span class="bu">range</span>(NUM_EPOCHS):</span>
+<span id="cb14-25"><a href="#cb14-25" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> i, data <span class="kw">in</span> <span class="bu">enumerate</span>(train_loader):</span>
+<span id="cb14-26"><a href="#cb14-26" aria-hidden="true" tabindex="-1"></a>        image, label <span class="op">=</span> data</span>
+<span id="cb14-27"><a href="#cb14-27" aria-hidden="true" tabindex="-1"></a>        optimizer.zero_grad()</span>
+<span id="cb14-28"><a href="#cb14-28" aria-hidden="true" tabindex="-1"></a>        image <span class="op">=</span> image.to(device)</span>
+<span id="cb14-29"><a href="#cb14-29" aria-hidden="true" tabindex="-1"></a>        label <span class="op">=</span> label.to(device)</span>
+<span id="cb14-30"><a href="#cb14-30" aria-hidden="true" tabindex="-1"></a>        outputs <span class="op">=</span> cnn(image)</span>
+<span id="cb14-31"><a href="#cb14-31" aria-hidden="true" tabindex="-1"></a>        loss <span class="op">=</span> loss_metric(outputs, label)</span>
+<span id="cb14-32"><a href="#cb14-32" aria-hidden="true" tabindex="-1"></a>        losses.append(loss.item())</span>
+<span id="cb14-33"><a href="#cb14-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-34"><a href="#cb14-34" aria-hidden="true" tabindex="-1"></a>        loss.backward()</span>
+<span id="cb14-35"><a href="#cb14-35" aria-hidden="true" tabindex="-1"></a>        optimizer.step()</span>
+<span id="cb14-36"><a href="#cb14-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-37"><a href="#cb14-37" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> i <span class="op">%</span> <span class="dv">1000</span> <span class="op">==</span> <span class="dv">0</span>:</span>
+<span id="cb14-38"><a href="#cb14-38" aria-hidden="true" tabindex="-1"></a>            <span class="bu">print</span>(<span class="ss">f"The current step is </span><span class="sc">{</span>i<span class="sc">}</span><span class="ss"> in the </span><span class="sc">{</span>epoch<span class="sc">}</span><span class="ss"> epoch. "</span></span>
+<span id="cb14-39"><a href="#cb14-39" aria-hidden="true" tabindex="-1"></a>                  <span class="ss">f"The loss for the last batch was </span><span class="sc">{</span>loss<span class="sc">.</span>item()<span class="sc">}</span><span class="ss">. "</span></span>
+<span id="cb14-40"><a href="#cb14-40" aria-hidden="true" tabindex="-1"></a>                  <span class="ss">f"The total loss is </span><span class="sc">{</span><span class="bu">sum</span>(losses)<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb14-41"><a href="#cb14-41" aria-hidden="true" tabindex="-1"></a>            f1, acc <span class="op">=</span> evaluate_performance(test_loader)</span>
+<span id="cb14-42"><a href="#cb14-42" aria-hidden="true" tabindex="-1"></a>            accuracies.append(acc)</span>
+<span id="cb14-43"><a href="#cb14-43" aria-hidden="true" tabindex="-1"></a>            f1_scores.append(f1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>The current step is 0 in the 0 epoch. The loss for the last batch was 5.68056583404541. The total loss is 5.68056583404541
+The current step is 1000 in the 0 epoch. The loss for the last batch was 0.0033018924295902252. The total loss is 552.0863177699503
+The current step is 2000 in the 0 epoch. The loss for the last batch was 0.0059255617670714855. The total loss is 814.0782704689045
+The current step is 3000 in the 0 epoch. The loss for the last batch was 0.06884118169546127. The total loss is 1044.9189079682546
+The current step is 4000 in the 0 epoch. The loss for the last batch was 0.0769830048084259. The total loss is 1257.0625633281788
+The current step is 5000 in the 0 epoch. The loss for the last batch was 0.1409284770488739. The total loss is 1413.7068831235347
+The current step is 6000 in the 0 epoch. The loss for the last batch was 0.021139046177268028. The total loss is 1559.5092783509208
+The current step is 7000 in the 0 epoch. The loss for the last batch was 0.000831345038022846. The total loss is 1715.2658046736137
+The current step is 8000 in the 0 epoch. The loss for the last batch was 0.004426009953022003. The total loss is 1864.890646117095
+The current step is 9000 in the 0 epoch. The loss for the last batch was 0.007887255400419235. The total loss is 2001.0973939303726
+The current step is 10000 in the 0 epoch. The loss for the last batch was 0.0310039184987545. The total loss is 2142.1981314078153
+The current step is 11000 in the 0 epoch. The loss for the last batch was 0.004002015106379986. The total loss is 2276.7468204431366
+The current step is 12000 in the 0 epoch. The loss for the last batch was 0.004485937301069498. The total loss is 2409.59029880478
+The current step is 13000 in the 0 epoch. The loss for the last batch was 0.0007990289013832808. The total loss is 2538.933369719378
+The current step is 14000 in the 0 epoch. The loss for the last batch was 0.007755488622933626. The total loss is 2654.6810632726256
+The current step is 0 in the 1 epoch. The loss for the last batch was 0.0021050558425486088. The total loss is 2757.288812872535
+The current step is 1000 in the 1 epoch. The loss for the last batch was 0.0006367879104800522. The total loss is 2869.6518699631747
+The current step is 2000 in the 1 epoch. The loss for the last batch was 0.005833970382809639. The total loss is 2991.5952052153184
+The current step is 3000 in the 1 epoch. The loss for the last batch was 0.12352235615253448. The total loss is 3102.5677232857415
+The current step is 4000 in the 1 epoch. The loss for the last batch was 0.00011294198338873684. The total loss is 3202.5640222237203
+The current step is 5000 in the 1 epoch. The loss for the last batch was 0.005728553980588913. The total loss is 3303.068875451456
+The current step is 6000 in the 1 epoch. The loss for the last batch was 0.00019064114894717932. The total loss is 3406.229488440803
+The current step is 7000 in the 1 epoch. The loss for the last batch was 0.00022386967611964792. The total loss is 3511.2122435310966
+The current step is 8000 in the 1 epoch. The loss for the last batch was 0.00018528304644860327. The total loss is 3615.7973996183114
+The current step is 9000 in the 1 epoch. The loss for the last batch was 0.0028845490887761116. The total loss is 3711.1961789740894
+The current step is 10000 in the 1 epoch. The loss for the last batch was 0.0010837310692295432. The total loss is 3808.655136974545
+The current step is 11000 in the 1 epoch. The loss for the last batch was 0.00020842113008257002. The total loss is 3909.6032301442674
+The current step is 12000 in the 1 epoch. The loss for the last batch was 0.003431916469708085. The total loss is 4012.272500330948
+The current step is 13000 in the 1 epoch. The loss for the last batch was 0.0013995182234793901. The total loss is 4107.566439142381
+The current step is 14000 in the 1 epoch. The loss for the last batch was 0.031621456146240234. The total loss is 4195.64182331661</code></pre>
+</div>
+</div>
+<p>Let’s graph the performance of the model as it was training.</p>
+<div class="cell" data-execution_count="12">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>steps <span class="op">=</span> [i <span class="op">*</span> <span class="dv">1000</span> <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="bu">len</span>(f1_scores))]</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots()</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>ax.plot(steps, f1_scores, label<span class="op">=</span><span class="st">"F1 Score"</span>)</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>ax.plot(steps, accuracies, label<span class="op">=</span><span class="st">"Accuracy"</span>)</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">"Step"</span>)</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">"Score Value"</span>)</span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">"Training Time Performance"</span>)</span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>plt.legend()</span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>plt.show()</span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>running_loss <span class="op">=</span> [<span class="bu">sum</span>(losses[:i<span class="op">+</span><span class="dv">1</span>])<span class="op">/</span>(i<span class="op">+</span><span class="dv">1</span>) <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="bu">len</span>(losses))]</span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots()</span>
+<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a>ax.plot(<span class="bu">list</span>(<span class="bu">range</span>(<span class="bu">len</span>(running_loss))), running_loss)</span>
+<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">"Step"</span>)</span>
+<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">"Loss"</span>)</span>
+<span id="cb16-16"><a href="#cb16-16" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">"Training Time Accumulated Loss"</span>)</span>
+<span id="cb16-17"><a href="#cb16-17" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="index_files/figure-html/cell-13-output-1.png" width="603" height="449"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="index_files/figure-html/cell-13-output-2.png" width="576" height="449"></p>
+</div>
+</div>
+<p>We can see that our model trains very quickly. As a matter of fact, we did not even need the two epochs of training as both accuracy and F1-score reach a high value after less than 5000 steps.</p>
+<p>Let us take a look at the final performance values of the model.</p>
+<div class="cell" data-execution_count="13">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>f1, acc <span class="op">=</span> evaluate_performance(test_loader)</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"The accuracy was </span><span class="sc">{</span>acc<span class="sc">}</span><span class="ss"> and the f1 score was </span><span class="sc">{</span>f1<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>The accuracy was 0.956 and the f1 score was 0.956</code></pre>
+</div>
+</div>
+</section>
+<section id="afterward" class="level2">
+<h2 class="anchored" data-anchor-id="afterward">Afterward</h2>
+<p>Neural Networks are a very complex subject and this blog post has been but a tiny glimpse into the world of neural networks. To learn more about neural networks, I encourage the reader to look deeper into the <a href="https://pytorch.org/docs/stable/index.html">PyTorch documentation</a>, or <a href="https://www.tensorflow.org/api_docs">TensorFlow documentation</a>. Additionally, I reccomend looking at <a href="https://nnfs.io/">Neural Networks from Scratch in Python</a>. If you would like to learn more about the background for the architecture used, I would recomend reading <a href="http://vision.stanford.edu/cs598_spring07/papers/Lecun98.pdf">Gradient Based Learning Applied to Document Recognition</a>.</p>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>

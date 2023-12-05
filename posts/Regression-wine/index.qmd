@@ -1,0 +1,229 @@
+---
+title: "Computer Learns the Beautiful Intricacies of Wine"
+author: "Daniel Sabanov"
+date: "2023-12-03"
+categories: [Regression, Random Forest]
+---
+
+![Alex Tihonovs / EyeEm//Getty Images](img.jpg)
+
+# Computer as a Sommelier
+Wine occupies an exceptional place in the fabric of human culture, serving as an enduring symbol of tradition, refinement, and celebration spanning countless millennia. Its rich history spans across continents and epochs, with deep-seated connections in both the Old World and the New. Wine's production and consumption have long been integral to diverse societies, providing a window into the evolution of craftsmanship, agricultural practices, and culinary artistry. In its intricate spectrum of flavors and aromas, wine encapsulates the harmonious fusion of nature, culture, and human innovation, standing as a cherished and enduring emblem of our shared heritage. The cultural significance of wine has even given rise to a specific class of experts known as sommeliers, responsible for curating wine lists at restaurants and evaluating the quality of wine produced by vineyards.
+
+A sommelier, often regarded as a professional wine connoisseur, plays a pivotal role in selecting and presenting wines in restaurant settings, as well as assessing the quality of wines produced by various wineries. The quality of wine is dependent on measurable attributes, and if these qualities can be quantified, it stands to reason that we can develop models capable of predicting wine quality, thus making the task of currating wine somewhat simpler. However, the first step on this journey is acquiring the necessary data.
+
+## Data
+
+The data we will analyze is sourced from [UC Irvine's website](https://archive.ics.uci.edu/dataset/186/wine+quality) and originates from the study "Modeling wine preferences by data mining from physicochemical properties" [1]. This dataset showcases wines of the Vinho Verde variety, produced in the breathtaking Minho region of Portugal. Data collection for this dataset took place between May 2004 and February 2007.
+
+This dataset comprises two separate files: one exclusively dedicated to white wines and the other specifically detailing red wines. Both files contain 11 fields that provide comprehensive information about the physical properties of the wines, complemented by an additional field that characterizes the wine's quality. The quality of the wine was evaluated through a series of blind tests, yielding ratings ranging from 0 to 10. 
+
+Let's take a quick look at the dataset:
+
+```{python}
+import pandas as pd
+from matplotlib import pyplot as plt
+white_wine_df = pd.read_csv("winequality-white.csv", sep=";")
+red_wine_df = pd.read_csv("winequality-red.csv", sep=";")
+white_wine_df.head()
+```
+
+```{python}
+red_wine_df.head()
+```
+
+```{python}
+import numpy as np
+plt.figure(figsize=(10,5))
+bin_edges = np.arange(11) - 0.5
+white_wine_df["quality"].plot(kind="hist", alpha=0.5, bins=bin_edges, edgecolor="k", density=True)
+red_wine_df["quality"].plot(kind="hist", alpha=0.5, bins=bin_edges, edgecolor="k", density=True)
+plt.legend(["White", "Red"])
+plt.xticks(range(10))
+plt.xlim([-1, 10])
+```
+
+The quality distribution of the wines seems to approximate a normal distribution. Additionally, there is a noticeable rightward shift in the distribution of white wine quality compared to red wine, suggesting that, on average, white wine may receive higher rankings. To examine the distributions of other columns in the data—given their continuous nature—it would be more appropriate to utilize Kernel Density Estimation (KDE) instead.
+
+```{python}
+for column in red_wine_df.columns:
+    if column != "quality":
+        plt.figure()    
+        white_wine_df[column].plot(kind="kde", label="White")
+        red_wine_df[column].plot(kind="kde", label="Red")
+        plt.legend()
+        plt.title(column)
+```
+
+The distributions of the independent variables related to wine quality show noticeable variations. Hence, it would be more sensible to develop separate models for each type of wine rather than trying to merge the data into a single dataframe, at least when we are dealing with simpler models.
+
+## Predicting Wine Quality
+
+### Linear Model
+Having reviewed the data, our next step is to construct a model that provides a reliable estimate of wine quality. Beginning with the simplest technique, let's explore simple linear regression. To accomplish this, we'll identify the variables that show the strongest correlation with wine quality. For visualization purposes, we'll leverage Seaborn, a high-level API for the Matplotlib library, streamlining the process of plotting specific graphs.
+
+```{python}
+import seaborn as sns
+plt.figure(figsize=(10,10))
+sns.heatmap(white_wine_df.corr(), annot=True).set(title="White Wine Correlation")
+plt.show()
+plt.figure(figsize=(10,10))
+sns.heatmap(red_wine_df.corr(), annot=True).set(title="Red Wine Correlation")
+plt.show()
+```
+
+Interestingly, it seems that alcohol concentration is the variable most correlated with wine quality. However, given the relatively weak correlation, I'm not overly optimistic about the prospects of this model. Before moving forward, it's crucial to confirm the presence of a linear relationship between the variables.
+
+```{python}
+plt.scatter("alcohol", "quality", data=white_wine_df, alpha=0.01)
+plt.title("White Wine Alchohol Content vs. Quality")
+
+plt.figure()
+plt.scatter("alcohol", "quality", data=red_wine_df, alpha=0.01)
+plt.title("Red Wine Alchohol Content vs. Quality")
+```
+
+The relationship between the variables doesn't seem to follow a linear pattern. Nevertheless, for the sake of exploration, we can attempt to fit a linear model to it. To start, we'll divide the data into a training set and a test set.
+
+```{python}
+from sklearn.model_selection import train_test_split
+X_white = white_wine_df["alcohol"].to_numpy().reshape(-1, 1) # Reshaped for a single feature
+y_white = white_wine_df["quality"].to_numpy().reshape(-1, 1)
+X_train_white, X_test_white, y_train_white, y_test_white = train_test_split(X_white, y_white, test_size=0.2, random_state=42)
+
+X_red = red_wine_df["alcohol"].to_numpy().reshape(-1, 1)
+y_red = red_wine_df["quality"].to_numpy().reshape(-1, 1)
+
+X_train_red, X_test_red, y_train_red, y_test_red = train_test_split(X_red, y_red, test_size=0.2, random_state=42)
+```
+
+```{python}
+from sklearn.linear_model import LinearRegression
+white_linear_regression_model = LinearRegression()
+white_linear_regression_model.fit(X_train_white, y_train_white)
+
+red_linear_regression_model = LinearRegression()
+red_linear_regression_model.fit(X_train_red, y_train_red)
+```
+
+Having fitted the model, let's now assess its predictive performance. In this case, we'll evaluate its accuracy using metrics such as Mean Squared Error (MSE) and Root Mean Squared Error (RMSE).
+
+```{python}
+from sklearn.metrics import mean_squared_error
+white_predictions = white_linear_regression_model.predict(X_test_white)
+red_predictions = red_linear_regression_model.predict(X_test_red)
+
+white_error = mean_squared_error(y_test_white, white_predictions)
+red_error = mean_squared_error(y_test_red, red_predictions)
+
+print(f"The MSE for white wine is {white_error} and RMSE of {white_error ** 0.5}")
+print(f"The MSE for red wine is {red_error} and RMSE of {red_error ** 0.5}")
+```
+
+At first glance, the RMSE of 0.78 may seem promising. However, it's important to consider that the data is heavily concentrated on a few data points. Let's explore a more robust technique—multiple linear regression.
+
+Multiple linear regression, akin to linear regression, involves using multiple variables to model the data. The next significant variables correlating with red wine quality are volatile acidity and density in white wine. We can fit a model in a similar fashion.
+
+Firstly, we divide the data into a test and train set, mirroring the previous procedure. However, this time, we include "volatile acidity" as part of our predictor variables (X) for red wine and "density" for white wine.
+
+```{python}
+X_white = white_wine_df[["alcohol", "density"]].to_numpy()
+y_white = white_wine_df["quality"].to_numpy()
+X_train_white, X_test_white, y_train_white, y_test_white = train_test_split(X_white, y_white, test_size=0.2, random_state=42)
+
+X_red = red_wine_df[["alcohol", "volatile acidity"]].to_numpy()
+y_red = red_wine_df["quality"].to_numpy()
+
+X_train_red, X_test_red, y_train_red, y_test_red = train_test_split(X_red, y_red, test_size=0.2, random_state=42)
+```
+
+The sklearn linear regression model supports multiple linear regression right out of the box. Therefore, the next code block doesn't introduce any new, ground-breaking, concepts. We simply supply it with a slightly modified X, incorporating the additional predictor variables.
+
+```{python}
+white_linear_regression_model = LinearRegression()
+white_linear_regression_model.fit(X_train_white, y_train_white)
+
+red_linear_regression_model = LinearRegression()
+red_linear_regression_model.fit(X_train_red, y_train_red)
+
+white_predictions = white_linear_regression_model.predict(X_test_white)
+red_predictions = red_linear_regression_model.predict(X_test_red)
+
+white_error = mean_squared_error(y_test_white, white_predictions)
+red_error = mean_squared_error(y_test_red, red_predictions)
+
+print(f"The MSE for white wine is {white_error} and RMSE of {white_error ** 0.5}")
+print(f"The MSE for red wine is {red_error} and RMSE of {red_error ** 0.5}")
+```
+
+When provided with more than one variable, the linear regression model demonstrated improved fitting capabilities on the red wine dataset. However, the RMSE for the white wine dataset remained unaltered, and overall, the RMSE remains relatively high. Perhaps it's worth considering a more potent approach to address the issue.
+
+### Random Forrest
+The random forest model is significantly more potent than linear regression, albeit at the expense of managing more hyperparameters and being more computationally expensive. To achieve the optimal model, we'll need to fine-tune some of these hyperparameters through a grid search. Although computationally more intensive, this approach ensures the selection of the best hyperparameters for the specific dataset.
+
+```{python}
+X_white = white_wine_df.loc[:, white_wine_df.columns != "quality"].to_numpy()
+y_white = white_wine_df["quality"].to_numpy()
+X_train_white, X_test_white, y_train_white, y_test_white = train_test_split(X_white, y_white, test_size=0.2, random_state=42)
+
+X_red = red_wine_df.loc[:, white_wine_df.columns != "quality"].to_numpy()
+y_red = red_wine_df["quality"].to_numpy()
+X_train_red, X_test_red, y_train_red, y_test_red = train_test_split(X_red, y_red, test_size=0.2, random_state=42)
+```
+
+Having re-split our data, we can now perform the grid search. The parameters slated for tuning are n_estimators and max_depth. n_estimators governs the number of trees in the forest, while max_depth regulates the maximum depth of each tree.
+
+```{python}
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.model_selection import GridSearchCV
+parameters = {"n_estimators": list(range(1,14)), 
+              "max_depth": list(range(5, 20)) + [None]} # None corresponds to no limit on the depth.
+clf_white = GridSearchCV(RandomForestRegressor(), param_grid=parameters, n_jobs=8)
+white_tuned_random_forrest = clf_white.fit(X_train_white, y_train_white)
+
+clf_red = GridSearchCV(RandomForestRegressor(), param_grid=parameters, n_jobs=8)
+red_tuned_random_forrest = clf_red.fit(X_train_red, y_train_red)
+```
+
+Now that we have a model for each dataset, let's assess their performance.
+
+```{python}
+white_predictions = white_tuned_random_forrest.predict(X_test_white)
+red_predictions = red_tuned_random_forrest.predict(X_test_red)
+
+white_error = mean_squared_error(y_test_white, white_predictions)
+red_error = mean_squared_error(y_test_red, red_predictions)
+
+print(f"The MSE for white wine is {white_error} and RMSE of {white_error ** 0.5}")
+print(f"The MSE for red wine is {red_error} and RMSE of {red_error ** 0.5}")
+```
+
+At the cost of higher training time, the model we've developed is substantially more accurate than the linear regression model. To the extent that I'm quite confident we could produce a robust model without separating the white and red wine datasets.
+
+Let's combine our datasets and then split them for training.
+
+```{python}
+combined_df = pd.concat([white_wine_df, red_wine_df])
+X_combined = combined_df.loc[:, combined_df.columns != "quality"].to_numpy()
+y_combined = combined_df["quality"].to_numpy()
+
+X_train_combined, X_test_combined, y_train_combined, y_test_combined = train_test_split(X_combined, y_combined, test_size=0.2, random_state=42)
+```
+
+```{python}
+parameters = {"n_estimators": list(range(1,14)), 
+              "max_depth": list(range(5, 20)) + [None]} # None corresponds to no limit on the depth.
+clf_combined = GridSearchCV(RandomForestRegressor(), param_grid=parameters, n_jobs=8)
+combined_tuned_random_forrest = clf_combined.fit(X_train_combined, y_train_combined)
+```
+
+```{python}
+combined_prediction = combined_tuned_random_forrest.predict(X_test_combined)
+combined_error = mean_squared_error(y_test_combined, combined_prediction)
+print(f"The MSE for white wine is {combined_error} and RMSE of {combined_error ** 0.5}")
+```
+
+Even with the combined dataset, it's apparent that our model can effectively distinguish between white and red wine, assigning a quality score that outperforms the simple linear regression model.
+
+## References
+[1] P. Cortez, et al. "Modeling wine preferences by data mining from physicochemical properties," in Decis. Support Syst., vol. 47, pp. 547-553, 2009.
