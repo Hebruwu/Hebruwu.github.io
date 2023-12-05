@@ -1,3 +1,11 @@
+---
+title: "Clustered Penguins"
+author: "Daniel Sabanov"
+date: "2023-12-04"
+categories: [Clustering]
+---
+
+
 # Using Clustering to Learn More About Penguins
 
 ```{python}
