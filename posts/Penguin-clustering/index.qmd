@@ -7,6 +7,8 @@ categories: [Clustering]
 
 # Using Clustering to Learn More About Penguins
 
+![Courtesy: S Richter et al/Journal of Physics D: Applied Physics](huddle.png)
+
 Clustering is a machine learning technique used to group similar data togehter into subsets based on inherent similarities and patterns. It is a techineque that is wildly used in explaratory data analysis in order to reveal insights about data. It has a significant overlap with classification as many algorithms that are used in clustering are also used for classification. Such algorithms include K-Means-Clustering, K-Nearest-Neighbor, and many others.
 
 In this blog, we will be exploring clustering as applied to the [penguins dataset](https://www.kaggle.com/datasets/parulpandey/palmer-archipelago-antarctica-penguin-data). 
@@ -23,6 +25,8 @@ The penguins dataset is a very popular dataset used for both clustering and clas
 - sex: the sex of the penguin.
 
 Let us load the data:
+
+## Loading and Preprocessing
 
 ```{python}
 import matplotlib.pyplot as plt
@@ -45,6 +49,9 @@ In this case `species_scheme` is an array that contains the previous labels with
 ```{python}
 species_scheme
 ```
+
+## Learning more about the data
+
 Let's take a look at the distribution of all the numeric values in the dataset:
 ```{python}
 numeric_cols = [
@@ -88,6 +95,10 @@ plt.legend()
 ```
 
 We can see that Gentoo are pretty distinct from the other two types of penguins. There is also some seperation between Adelies and Chinstraps's, but it is smaller in comparison. This will make it more difficult for our clustering algorithm to distinguish between them.
+
+## Clustering
+
+We will try to distinguish between the penguins using K-Means-Clustering (K-Means). K-Means works by randomly initiating centers of each cluster (in our case it will initiate 3). It will then assign each point to a cluster based on which center the point is closest to. The centers of each cluster are then recalculated, and the steps are repeated until convergence or a step limit is reached. This is a good clustering algorithm for this dataset as the datapoints resemble unordered blobs with no specific shape that are somewhat distant from one another.
 
 ```{python}
 from sklearn.cluster import KMeans
@@ -160,9 +171,13 @@ for col in numeric_cols:
     plt.plot()
 ```
 
-We can see pretty clearly in the data that one group of penguins is predicted perfectly, the genttos, as the distributions are identical, while the two others were not predicted as perfectly as the distributions do not match as well. We could try to improve the results by also introducing the categorical data into the dataset, as previously we were primarily working with only the continous data. 
+We can see pretty clearly in the data that one group of penguins is predicted perfectly, the genttos, as the distributions are identical, while the two others were not predicted as perfectly as the distributions do not match as well.
 
-Once again, we will encode tthe data.
+## Trying to improve the resutls
+
+We could try to improve the previous results by also introducing the categorical data into the dataset, as previously we were primarily working with only the continous data. This will hopefully give the algorithm more data to distinguish between the groups. 
+
+Once again, we will encode the data.
 ```{python}
 encoded = pd.get_dummies(penguins_data, columns=["island", "sex"])
 encoded.head()
