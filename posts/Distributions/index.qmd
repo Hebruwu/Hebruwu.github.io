@@ -7,6 +7,8 @@ categories: [Naive Bayes]
 
 # Learning About Probabilities and Related ML Methods
 
+![Kristina Armitage/Quanta Magazine](image.webp)
+
 In this blog we will be discussing Naive Bayes and Logistic Regression.
 The reason for such a selection of topics is the comonality that both of these algorithms share.
 Both of these algorithms are probabilistic classifiers.
@@ -184,9 +186,78 @@ y_test.iloc[0]
 
 And that checks out!
 
+## Examining Possible Improvements
+Remember the assumption that naive bayes makes?
+Well, so far we do not know if the assumption was violated.
+Even though naive bayes tends to perform well even when its assumptions are violated  we may be able to improve performance if we reduce the number of correlated variables.
+We should take a look at the correlation matrix.
+```{python}
+sns.heatmap(X_train.corr(), annot=True)
+```
+It looks like the number of pregnancies is correlated with age, which makes sense.
+Additionally we can see that there is a correlation between skin thickness and BMI.
+We could try to remove these variables from the equation and see how the model performs.
+```{python}
+reduced_X_train = X_train.drop(columns=["Pregnancies", "SkinThickness"])
+reduced_X_test = X_test.drop(columns=["Pregnancies", "SkinThickness"])
+
+nb = GaussianNB()
+nb.fit(reduced_X_train, y_train)
+prediction = nb.predict(reduced_X_test)
+cmd = ConfusionMatrixDisplay.from_estimator(nb, reduced_X_test, y_test)
+print("Accuracy: ", accuracy_score(prediction, y_test))
+print("F1 score: ", f1_score(prediction, y_test))
+```
+It looks like we were not able to improve the predictive power of the model since even though our accuracy went up our f1 score dropped.
+This is because we now have more false negatives.
+Never the less, we were able to reduce the number of variables that we are working with, while maintaining most of the predictive power of the model.
+However, if we have access to these variables, they should probably still kept within the model.
+
+Next, we will be examining a different type of model, that also relies on probability.
 
 ## Training Logistic Regression
 
+
+Similarly to naive bayes, logistic regression is also capable to predict the probabilities of its predictions.
+Let's examine the math behind it.
+
+We know that the linear regression equaiton is given by:
+$$
+y = \beta_0 + \beta_1 x_1 + ... + \beta_n x_n
+$$
+
+However, instead of trying to predict $y$ directly. 
+We will be trying to predict the log odds of a class.
+So, we have:
+$$
+\log(odds) = \beta_0 + \beta_1 x_1 + ... + \beta_n x_n
+$$
+
+We know that probability can be predicted using odds with the following equation:
+$$
+p = \frac{odds}{1 + odds}
+$$
+
+We can substitute that into our equaiton, but before we do we first need to find the odds equation.
+So we exponentiate the function.
+$$
+odds = e^{\beta_0 + \beta_1 x_1 + ... + \beta_n x_n}
+$$
+
+Now we substitute that into our probability function.
+
+$$
+p = \frac{e^{\beta_0 + \beta_1 x_1 + ... + \beta_n x_n}}{1 + e^{\beta_0 + \beta_1 x_1 + ... + \beta_n x_n}}
+$$
+We can simplify the equation by dividing by the odds function.
+We end up with.
+$$
+p = \frac{1}{1 + e^{-(\beta_0 + \beta_1 x_1 + ... + \beta_n x_n)}}
+$$
+
+Now, we have an equation that can predict a probability of a specific class given $X$.
+
+Training the model is very easy with scikit-learn.
 ```{python}
 from sklearn.linear_model import LogisticRegression
 
@@ -198,3 +269,27 @@ print("Accuracy: ", accuracy_score(prediction, y_test))
 print("F1 score: ", f1_score(prediction, y_test))
 ```
 
+We can see that the model was able to perform very similarly to the naive bayes model.
+
+## Trying to Improve Performance
+
+Logistic regression assumest that there is no multicollinearity in the data. 
+That means no variable can be linearly related to other variables.
+We already know we have some variables that are somewhat related to each other.
+Let's see how the model performs when we drop the related columns.
+
+```{python}
+from sklearn.linear_model import LogisticRegression
+
+lr = LogisticRegression(max_iter=1000)
+lr.fit(reduced_X_train, y_train)
+cmd = ConfusionMatrixDisplay.from_estimator(lr, reduced_X_test, y_test)
+prediction = lr.predict(reduced_X_test)
+print("Accuracy: ", accuracy_score(prediction, y_test))
+print("F1 score: ", f1_score(prediction, y_test))
+```
+
+In this case there was no significant impact on the performance of the model.
+Yet, we were still able to reduce the amount of data that the model requires for training.
+However, if this model was to be used in the real world, I would recommend keeping the variables as our model sensitivite has decreased.
+It is much better to have a false positive in a medical setting than a false negative since we rist patients going without treatment.
