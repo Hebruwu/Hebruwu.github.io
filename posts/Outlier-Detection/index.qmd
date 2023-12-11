@@ -1,0 +1,150 @@
+---
+title: "Machine Learning and Fraud"
+author: "Daniel Sabanov"
+date: "2023-12-11"
+categories: [Anomally Detection, Outlier Detection]
+---
+
+# Detecting Fraudulant Transavtions
+
+![Taken from https://blog.hubspot.com/sales/ach-vs-credit-card](image.webp)
+
+Credit card fraud is a serious issue that many credit card companies and banks are required to deal with in order to guarantee their customers' financial safety.
+However, detecting credit card fraud is difficult. 
+When training an ML model one wants to have a good sample size that represents all the possible outcomes, but it is difficult to collect the required ammount of data in order to have a good representative sample of both fraudulant and non-fraudulant transactions as fraudulant transactions are much less common.
+In this cases, Data Scientists and ML Engineers need to consider a different appraoch to building models to detect bad transactions.
+Luckily, there are various ML techniques that can help with the task.
+These thechniques sit under the umbrella of anomally detection.
+
+In the following blog, we will be showing an application of two annomally detection techniques on the credit card fraud dataset.
+
+## Dataset
+The [dataset](https://www.kaggle.com/datasets/mlg-ulb/creditcardfraud) contains data from over a quarter of a million transactions made by credit cards in September of 2013 made by European cardholders.
+The dataset was normalized and transformed via PCA with its fields also being encrypted in order to conceal the personal information about the cardholders.
+Out of a quarter of a million transactions, only 492 transactions were fraudulant.
+This is a highly imbalanced dataset, and more common machine learning techniques will struggle with reliably being able to detect the bad transactions.
+
+Let us load the dataset.
+
+```{python}
+import pandas as pd
+data = pd.read_csv("creditcard.csv")
+data.head()
+```
+
+```{python}
+from matplotlib import pyplot as plt
+y = data["Class"]
+X = data.drop(columns = ["Class"])
+for column in X.columns:
+    fig1, ax1 = plt.subplots()
+    data[column].plot(kind="kde", title=column, ax=ax1)
+    plt.show()
+```
+We can see that the dat ain most columns appears to be normally distributed, with a few columns appearing to be multimodal.
+
+We can also look at the distributions of the fraudulant transactions and the non-fraudulant transactions together.
+```{python}
+from matplotlib import pyplot as plt
+for column in X.columns:
+    fig1, ax1 = plt.subplots()
+    data[column].loc[data["Class"] == 0].plot(kind="kde", title=column, ax=ax1)
+    data[column].loc[data["Class"] == 1].plot(kind="kde", title=column, ax=ax1)
+    plt.show()
+```
+
+We see that the distributions of the fraudulant transactions and the non-fraudlant transactions differ from one another.
+
+We can also look at the two dimentional projection of the data.
+
+```{python}
+from sklearn.preprocessing import StandardScaler
+from sklearn.pipeline import Pipeline
+from sklearn.decomposition import PCA
+pipeline = Pipeline([
+    ("scaler", StandardScaler()),
+    ("pca", PCA(n_components=2)),
+])
+
+pca_data = pd.DataFrame(
+    pipeline.fit_transform(X),
+    columns=["PC1", "PC2"],
+    index=data.index,
+)
+
+plt.scatter(pca_data["PC1"], pca_data["PC2"], c=y, cmap="viridis", alpha=0.1)
+plt.title("Projection of the Transaction Data")
+```
+Here, it is a bit difficult to tell appart the fraudlant and non-fraudulant transactions as the fraudulant transactions are blended in with the non-fraudulant ones. Let us try to build a model in order to differentiate between the two.
+
+## Training the Models
+
+### First Appraoch
+For the first approach we will be using local outlier factor in order to detect transactions that would be considered outliers. 
+This method works by examining the the surrounding neighbors of the datapoint and seeing if the current datapoints deviates significantly from its neighbors.
+We can ran through the model fairly easily using the Scikit-Learn library.
+```{python}
+from sklearn.neighbors import LocalOutlierFactor
+loc = LocalOutlierFactor()
+prediction = loc.fit_predict(X)
+```
+Note that we did not need to train the model.
+The model is unsupervised and tries to learn from the data by itself. 
+
+It is also important to note that the model outputs are integers $1$ and $-1$.
+$1$ indicates that a specific datapoint is not an outlier, while $-1$ indicates that the datapoint is in fact an outlier.
+
+In order to be able to diagnose the model we want to convert our dataset to the same scheme that our model uses. So, we convert $0$'s into $1$'s and $1$'s into $-1$'s.
+
+```{python}
+y.replace(1, -1, inplace=True)
+y.replace(0, 1, inplace=True)
+```
+
+Now, we can examine the model performance:
+```{python}
+import seaborn as sns
+from sklearn.metrics import confusion_matrix, f1_score
+
+confusion = confusion_matrix(y, prediction)
+sns.heatmap(
+    confusion,
+    annot=True,
+    fmt="d",
+    cmap="Blues",
+    xticklabels=["Predicted -1", "Predicted 1"],
+    yticklabels=["Actual -1", "Actual 1"],
+)
+print("f1_score: ", f1_score(y, prediction))
+```
+Despite having a high f1 score, the model actually performed very poorly since our recall (or sensitivity), the ability to predict true positives, is very low. In our case it is $\frac{99}{99 + 393}$. Meaning, we were not able to reliably detect the fraudulant transactions.
+
+### Second Approach
+The second approach we will try are isolation forests.
+Isolation forests are a very common technique that is used in anomally detection and outlier detection due their robustness in the presence of irrelevant attributes and their high efficiency.
+The way that isolation forests work is by constructing multiple isolation trees that then average their scores.
+Each isolation tree is constructed by partitioning the data accross all of its features until each datapoint is located in its own leaf node.
+Then, the distance to each datapoint is measured. 
+The shorter the distance, the more likely is the datapoint to be an outlier. 
+This distance is also the score that is being averaged out.
+
+Once again, creating an isolation forest is made easy with scikit-learn.
+```{python}
+from sklearn.ensemble import IsolationForest
+forest = IsolationForest(random_state=42)
+prediction = forest.fit_predict(X)
+```
+
+```{python}
+confusion = confusion_matrix(y, prediction)
+sns.heatmap(confusion, annot=True, fmt="d", cmap="Blues",
+            xticklabels=['Predicted -1', 'Predicted 1'],
+            yticklabels=['Actual -1', 'Actual 1'])
+```
+
+This model has perfomed significantly better.
+We were able to find much higher percentage of fraudulant transactions.
+It is true that there were also much more false possitives outputed by this model.
+However, in cases such as this, it is much better to have a high false positive rate (also called low precision) since it is better to be overly cautios in these scenarios.
+This is why credit companies would sometimes block your credit card transactions due to suspected fraud.
+Thier model most likely has had a false positive, but it was much better to be safe than sorry.
