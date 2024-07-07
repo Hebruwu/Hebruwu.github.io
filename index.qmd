@@ -1,5 +1,5 @@
 ---
-title: "Rock with Lightning"
+title: "Welcome!"
 listing:
   contents: posts
   sort: "date desc"
@@ -11,10 +11,8 @@ page-layout: full
 title-block-banner: true
 ---
 
-# Welcome to Rock With Lightning
-Hello there! Odds are you are here because you are either my professor, or a TA for CS5805, in which case hello and welcome. You will be able to find the blog posts right below the welcome section.
+This website began as a class assignment, but I decided to turn it into my personal site. It serves as a space for me to share a bit about myself and showcase some of my projects. I've also kept one of the older posts from my class because I thought it was neat.
 
-On the off chance that you are neither, how did you get here? Not that you are unwelcome. Just questioning the series of events that brought you on a Github page lead by a random college student. 
-You should know, this is a blog that I lead for my machine learning class as part of a class assignment. The posts that you will see here will primary deal with machine learning related topics that I find interesting either inside or outside of class. If this is the sort of content you are interested in, welcome! 
+Right now, the website is a bit sparse since I'm just getting started. I'm still figuring out the best way to manage this page. Currently, I'm considering turning it into a small blog to document my project progress. I might also share my journey with LeetCode here.
 
 # Posts

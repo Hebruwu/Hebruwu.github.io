@@ -9,5 +9,14 @@ about:
       href: https://github.com/Hebruwu
 
 ---
+I am a Virginia Tech graduate with an MEng in Computer Science and Applications. During my master's, I primarily focused on machine learning and artificial intelligence, occasionally delving into high-performance computing.
 
-This blog is lead as part of a machine learning class I am currently taking at Virginia Tech. In this blog I will be exploring machine learning related topics. There will be 5 posts on this website. Each post will be discussing a different machine learning related topic. Each post will include some code and visualizations. The code is executed on my laptop, so you should be able to replecate the results fairly easily without requiring an extremly powerful machine.
+For my undergraduate degree, I double-majored in Computer Science and [Computer Modeling and Data Analytics](https://data.science.vt.edu/programs/cmda.html).
+
+Throughout my studies, I have gained proficiency in Java, Python, C, R (I don't like this one), SQL, and CUDA.
+
+In my free time, I also learned Kotlin, Rust, C++, and Go.
+
+During one of my summers, I had the privilege of interning at [Clari](https://www.clari.com/) as a Data Platform Engineer. I was responsible for creating a pipeline to move customer data from production servers and company APIs to the data analytics team's Snowflake database, along with some summary statistics. It was a fulfilling experience where I learned a lot about Terraform and various AWS tools such as SQS, S3, and Lambda.
+
+The summer before that, I interned with [Synthesized](https://www.synthesized.io/). I was responsible for refactoring and adding functionality to [insight](https://github.com/synthesized-io/insight), a Python package used to assess the quality of synthetic data against the data it was generated from. During that project, I learned much about writing production-ready code, Docker, and Grafana.

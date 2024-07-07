@@ -2,12 +2,7 @@
   {
     "listing": "/index.html",
     "items": [
-      "/posts/Outlier-Detection/index.html",
-      "/posts/Distributions/index.html",
-      "/posts/Penguin-clustering/index.html",
-      "/posts/Neural-Networks/index.html",
-      "/posts/KNN-text-classification/index.html",
-      "/posts/Regression-wine/index.html"
+      "/posts/KNN-text-classification/index.html"
     ]
   }
 ]

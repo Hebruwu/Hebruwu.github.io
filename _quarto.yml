@@ -3,7 +3,7 @@ project:
   output-dir: docs
 
 website:
-  title: "Rock with Lightning"
+  title: "Daniel Sabanov"
   navbar:
     right:
       - about.qmd
